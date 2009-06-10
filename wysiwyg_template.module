@@ -18,8 +18,8 @@ function wysiwyg_template_wysiwyg_plugin($editor, $version) {
       if (!isset($integrated[$editor])) {
         $integrated[$editor] = TRUE;
         // get values defined on settings page
-        $jspath = variable_get('wysiwyg_template_path','sites/all/files');
-        $jsfile = variable_get('wysiwyg_template_file','template.js');
+        $jspath = variable_get('wysiwyg_template_path', 'sites/all/files');
+        $jsfile = variable_get('wysiwyg_template_file', 'template.js');
         // include path to js file
         $settings = array(
           'template_external_list_url' => base_path() . $jspath . '/' . $jsfile,
@@ -43,13 +43,12 @@ function wysiwyg_template_wysiwyg_plugin($editor, $version) {
 function wysiwyg_template_menu() {
   $items = array();
 
-  $items['admin/settings/tinytpl'] = array(
-    'title' => 'Tiny Templates',
+  $items['admin/settings/wysiwyg_template'] = array(
+    'title' => 'Wysiwyg Templates',
     'description' => 'Wysiwyg Template plugin settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_admin_settings'),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
+    'access arguments' => array('administer filters'),
   );
 
   return $items;
@@ -75,7 +74,7 @@ function wysiwyg_template_admin_settings() {
   );
   $form['info'] = array(
     '#title' => t('Next Steps'),
-    '#value' => '<p>'.t('Create a file called ').variable_get('wysiwyg_template_file', 'template.js').t(' and upload it to ').variable_get('wysiwyg_template_path', 'sites/all/files').t('.  The file should define the names and locations of the templates you would like to use in your WYSIWYG editor.  You may copy and paste the syntax from the README.txt file.').'</p>',
+    '#value' => '<p>'.t('Create a file called ').variable_get('wysiwyg_template_file', 'template.js').t('(from above) and upload it to ').variable_get('wysiwyg_template_path', 'sites/all/files').t('(from above).  The file should define the names and locations of the HTML templates you would like to use in your WYSIWYG editor.  You may copy and paste the syntax from the README.txt file.').'</p>',
   );
   
   return system_settings_form($form);
