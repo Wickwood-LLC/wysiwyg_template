@@ -1,0 +1,8 @@
+; $Id$
+name = Wysiwyg Template Plugin
+description = Makes TinyMCE template plugin available to the Wysiwyg API: insert html templates
+package = User interface
+core = 6.x
+dependencies[] = wysiwyg
+
+
