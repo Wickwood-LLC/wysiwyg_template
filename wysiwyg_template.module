@@ -15,23 +15,26 @@ function wysiwyg_template_wysiwyg_plugin($editor, $version) {
 
   switch ($editor) {
     case 'tinymce':
-      if (!isset($integrated[$editor])) {
-        $integrated[$editor] = TRUE;
-        // get values defined on settings page
-        $jspath = variable_get('wysiwyg_template_path', 'sites/all/files');
-        $jsfile = variable_get('wysiwyg_template_file', 'templates.js');
-        // include path to js file
-        $settings = array(
-          'template' => array('template_external_list_url' => base_path() . $jspath . '/' . $jsfile),
-        );
-        drupal_add_js($settings, 'setting');
-      }
+      // get values defined on settings page
+      $jspath = variable_get('wysiwyg_template_path', 'sites/all/files');
+      $jsfile = variable_get('wysiwyg_template_file', 'templates.js');
+      // include path to js file
+      /*
+      $settings = array(
+        'template' => array('template_external_list_url' => base_path() . $jspath . '/' . $jsfile),
+      );
+      drupal_add_js($settings, 'setting');
+      */
+      $tinymce = wysiwyg_get_editor($editor);
       return array(
         'template' => array(
-          'path' => $editor['library path'] .'/plugins/template',
+          'path' => $tinymce['library path'] .'/plugins/template',
           'buttons' => array('template' => t('Insert templates')),
           'url' => 'http://wiki.moxiecode.com/index.php/TinyMCE:Plugins/template',
           'internal' => TRUE,
+          'options' => array(
+            'template_external_list_url' => base_path() . $jspath . '/' . $jsfile,
+          ),
           'load' => TRUE,
         ),
       );
