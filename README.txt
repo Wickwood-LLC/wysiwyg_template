@@ -1,8 +1,9 @@
-/* $Id$ */
 
 -- SUMMARY --
 
-The 'template' plugin for TinyMCE allows a user to select a HTML template from a drop-down and insert it into the WYSIWYG text-area.  This module supports that TinyMCE plugin for use with the WYSIWYG API, but of course, if anyone wanted to provide additions for FCK or other editors I'll be happy to include those too.  
+This module works with the template plugins for TinyMCE, CK Editor and
+FCK Editor, which allow a user to select an HTML template from a drop-down and
+insert it into the WYSIWYG text-area.
 
 For a full description visit the project page:
   http://drupal.org/project/wysiwyg_template
@@ -19,27 +20,24 @@ Bug reports, feature suggestions and latest developments:
 
 * Install as usual, see http://drupal.org/node/70151 for further information.
 
-* Go to Administer > Site configuration > Wysiwyg Template, and verify the values
-  for your path and file name of your template registry file  (this file will 
-  hold the names and locations of your templates)
-
-* Create the template registry file in the specified location, its contents should
-  look something like this: 
-  
-  // These templates will be displayed as a dropdown
-  var tinyMCETemplateList = [
-  // Name, URL, Description
-  ["Template One", "sites/all/files/templates/template1.html", "Template One"],
-  ["Template Two", "sites/all/files/templates/template2.html", "Template Two"]
-  ];
-  
-*  Create your template files at the locations specified in your registry file
-
--- CONFIGURATION --
-
 * Go to Administer > Site configuration > Wysiwyg and
 
   - click "edit" to set up your editor profile
 
   - under "Buttons and Plugins" you'll see "Insert Templates" as a new option
+
+* Administer > Site configuration > Wysiwyg > Add Template to create a new template.
+
+* Administer > Site configuration > Wysiwyg > List Templates to manage your existing templates.
+
+
+-- EDITOR COMPATIBILITY --
+
+Supported editors:
+
+ - FCK Editor 2.66
+ 
+ - CK Editor 3.4.0
+ 
+ - Tiny MCE 3.3.8
 
