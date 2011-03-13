@@ -93,7 +93,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
       return array(
 	'template' => array(
 	  'buttons' => array('template' => t('Insert templates')),
-	  'url' => 'admin/content/wysiwyg-template',
+	  'url' => 'http://drupal.org/project/wysiwyg_template',
 	  'internal' => TRUE,
 	  'options' => array(
 	    'template_external_list_url' => url('wysiwyg-templates/' . $editorName . '/list'), //load the javascript template list
@@ -111,12 +111,12 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
       return array(
 	'templates' => array(
 	  'buttons' => array('Templates' => t('Insert templates')),
-	  'url' => 'admin/content/wysiwyg-template',
+	  'url' => 'http://drupal.org/project/wysiwyg_template',
 	  'internal' => TRUE,
 	  'options' => array(
 	    'templates_files' => array(url('wysiwyg-templates/' . $editorName . '/list')), //load the javascript template list
 	  ),
-	  'load' => TRUE,
+	  'load' => FALSE,
 	),
       );
     break;
@@ -124,12 +124,12 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
       return array(
 	'templates' => array(
 	  'buttons' => array('Templates' => t('Insert templates')),
-	  'url' => 'admin/content/wysiwyg-template',
+	  'url' => 'http://drupal.org/project/wysiwyg_template',
 	  'internal' => TRUE,
 	  'options' => array(
 	    'TemplatesXmlPath' => array(url('wysiwyg-templates/' . $editorName . '/list')), //load the javascript template list
 	  ),
-	  'load' => TRUE,
+	  'load' => FALSE,
 	),
       );
     break;
