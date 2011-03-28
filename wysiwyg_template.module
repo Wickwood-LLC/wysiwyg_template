@@ -163,7 +163,7 @@ function wysiwyg_template_list_js($editorName){
       //todo: include an image with templates...
       //imagesPath : CKEDITOR.getUrl( CKEDITOR.plugins.getPath( 'templates' ) + 'templates/images/' ),
       // load the templates into the json array structure
-      foreach($templates as &$template){
+      foreach($templates as $template){
 	$template['html'] = $template['body'];
 	unset($template['body']);
 	unset($template['tid']);
@@ -265,7 +265,7 @@ function wysiwyg_template_save_template($template){
     $tItem['tid'] = $template['tid'];
   }
   //save to database
-  return drupal_write_record('wysiwyg_templates', &$tItem, $key);
+  return drupal_write_record('wysiwyg_templates', $tItem, $key);
 }
 
 /**
