@@ -89,6 +89,14 @@ function wysiwyg_template_template_form($something, $form_state) {
     '#default_value' => isset($form_state['values']['body']) ? $form_state['values']['body'] : '',
     '#required' => true
   );
+  if(module_exists('token')){
+    $form['token_help'] = array(
+      '#theme' => 'token_tree',
+      '#token_types' => array(),
+      '#global_types' => true
+    );
+    $form['body']['#title'] = theme('token_help', 'node');
+  }
   $form['submit'] = array(
     '#type' => 'submit', 
     '#value' => t('Save')

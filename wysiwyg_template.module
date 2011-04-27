@@ -208,7 +208,7 @@ function wysiwyg_template_html_print($body, $editorName){
  */
 function wysiwyg_template_html_load($tid){
   $template = wysiwyg_template_load_template($tid);
-  return $template['body'];
+  return module_exists('token') ? token_replace($template['body']) : $template['body'];
 }
 
 /**
@@ -240,7 +240,7 @@ function wysiwyg_template_load_all(){
     $template = array(
       'title' => $dbTemplate->title,
       'description' => $dbTemplate->description,
-      'body' => $dbTemplate->body,
+      'body' => token_replace($dbTemplate->body),
       'tid' => $dbTemplate->tid,
     );
     $templates[] = $template;
