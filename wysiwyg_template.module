@@ -101,7 +101,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
 	    //'template_replace_values' => array('caption' => 'Replace with this content')
 	  ),
 	  'extended_valid_elements' => array( //tinymce specific - allows additional elements to be used
-	    'img[class|src|border=0|alt|title|width|height|align|name|style]',
+	    'img[id|class|src|border=0|alt|title|width|height|align|name|style]',
 	  ),
 	  'load' => TRUE,
 	),
