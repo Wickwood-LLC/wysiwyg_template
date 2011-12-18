@@ -46,6 +46,26 @@ function wysiwyg_template_menu() {
     'parent' => 'admin/config/content/wysiwyg-templates',
     'file' => 'wysiwyg_template.admin.inc',
   );
+  // Enable export/import features only when ctools module is present.
+  if (module_exists('ctools')) {
+    $items['admin/config/content/wysiwyg-templates/import'] = array(
+      'title' => 'Import Template',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('wysiwyg_template_import_form'),
+      'access arguments' => array('administer filters'),
+      'type' => MENU_LOCAL_TASK,
+      'file' => 'wysiwyg_template.admin.inc',
+    );
+    $items['admin/config/content/wysiwyg-templates/export/%wysiwyg_template'] = array(
+      'title' => 'Export Template',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('wysiwyg_template_export_form', 5),
+      'access arguments' => array('administer filters'),
+      'type' => MENU_CALLBACK,
+      'parent' => 'admin/config/content/wysiwyg-templates',
+      'file' => 'wysiwyg_template.admin.inc',
+    );
+  }
   //delete template
   $items['admin/config/content/wysiwyg-templates/delete'] = array(
     'title' => 'Delete Template',
@@ -75,12 +95,14 @@ function wysiwyg_template_menu() {
 /**
  * Wysiwyg template Wildcard menu loader - prepare item for the create/modify admin form
  * 
- * @ tid - template ID
+ * @param $name
+ *   Template machine name.
  *
- * return $template - the loaded template from the db
+ * @return
+ *   The loaded template from the db.
  */
-function wysiwyg_template_load($tid){
-  $template = wysiwyg_template_load_template($tid);
+function wysiwyg_template_load($name){
+  $template = wysiwyg_template_load_template($name);
   return $template;
 } 
 
@@ -153,7 +175,7 @@ function wysiwyg_template_list_js($editorName){
       foreach($templates as $template){
 	$outArray[] = array(
 		$template['title'],
-		url('wysiwyg-templates/' . $editorName . '/load/') . $template['tid'],
+		url('wysiwyg-templates/' . $editorName . '/load/') . $template['name'],
 		$template['description'],
 	);
       }
@@ -167,7 +189,7 @@ function wysiwyg_template_list_js($editorName){
       foreach($templates as &$template){
 	$template['html'] = $template['body'];
 	unset($template['body']);
-	unset($template['tid']);
+	unset($template['name']);
       }
       print json_encode($templates);
       print "});";
@@ -207,16 +229,16 @@ function wysiwyg_template_html_print($body, $editorName){
 /**
  * Load a specific template for viewing, as called through the menu wildcard
  */
-function wysiwyg_template_html_load($tid){
-  $template = wysiwyg_template_load_template($tid);
+function wysiwyg_template_html_load($name){
+  $template = wysiwyg_template_load_template($name);
   return module_exists('token') ? token_replace($template['body']) : $template['body'];
 }
 
 /**
  * Wysiwyg template database load function
  */
-function wysiwyg_template_load_template($tid){
-  $templateResults = db_query("SELECT * FROM {wysiwyg_templates} WHERE tid = :tid", array(':tid' => $tid));
+function wysiwyg_template_load_template($name){
+  $templateResults = db_query("SELECT * FROM {wysiwyg_templates} WHERE name = :name", array(':name' => $name));
   $template = $templateResults->fetchObject();
   $tItem = null;
   if($template != null){
@@ -224,7 +246,7 @@ function wysiwyg_template_load_template($tid){
       'title' => $template->title,
       'description' => $template->description,
       'body' => $template->body,
-      'tid' => $tid,
+      'name' => $name,
     );
   }
   
@@ -242,7 +264,7 @@ function wysiwyg_template_load_all(){
       'title' => $dbTemplate->title,
       'description' => $dbTemplate->description,
       'body' => token_replace($dbTemplate->body),
-      'tid' => $dbTemplate->tid,
+      'name' => $dbTemplate->name,
     );
     $templates[] = $template;
   }
@@ -250,28 +272,29 @@ function wysiwyg_template_load_all(){
 }
 
 /**
- * Wysiwyg template database save function
+ * Wysiwyg template database save function.
  */
-function wysiwyg_template_save_template($template){
-  $tItem = array(
+function wysiwyg_template_save_template($template) {
+  $new_template = array(
+    'name' => $template['name'],
     'title' => $template['title'],
     'description' => $template['description'],
     'body' => $template['body'],
   );
-  
-  //if it's an existing item we're updating
-  $key = array();
-  if(isset($template['tid'])){
-    $key = 'tid';
-    $tItem['tid'] = $template['tid'];
-  }
-  //save to database
-  return drupal_write_record('wysiwyg_templates', $tItem, $key);
+
+  $existing = wysiwyg_template_name_exists($template['name']);
+
+  // Save to database.
+  return drupal_write_record('wysiwyg_templates', $new_template, ($existing ? 'name' : array()));
 }
 
 /**
  * Wysiwyg template database delete function
  */
-function wysiwyg_template_delete_template($tid){
-  db_query("DELETE FROM {wysiwyg_templates} WHERE tid = :tid", array(':tid' => $tid));
+function wysiwyg_template_delete_template($name){
+  db_query("DELETE FROM {wysiwyg_templates} WHERE name = :name", array(':name' => $name));
+}
+
+function wysiwyg_template_name_exists($name) {
+  return (bool) db_query('SELECT 1 FROM {wysiwyg_templates} WHERE name = :name', array(':name' => $name))->fetchField();
 }

@@ -12,12 +12,17 @@ function wysiwyg_template_overview(){
   $rows = array();
   // load the templates and display them on the admin form
   $templateResults = db_query("SELECT * FROM {wysiwyg_templates}");
+  // Show export link when ctools is enabled.
+  $export_enabled = module_exists('ctools');
   foreach ($templateResults as $template){
     $row = array();
     $row[] = $template->title;
     $row[] = $template->description;
-    $row[] = l(t('edit'), "admin/config/content/wysiwyg-templates/edit/" . $template->tid);
-    $row[] = l(t('delete'), "admin/config/content/wysiwyg-templates/delete/" . $template->tid);
+    $row[] = l(t('edit'), "admin/config/content/wysiwyg-templates/edit/" . $template->name);
+    if ($export_enabled) {
+      $row[] = l(t('export'), "admin/config/content/wysiwyg-templates/export/" . $template->name);
+    }
+    $row[] = l(t('delete'), "admin/config/content/wysiwyg-templates/delete/" . $template->name);
     
     $rows[] = $row;
   }
@@ -25,15 +30,15 @@ function wysiwyg_template_overview(){
   if (empty($rows)){
     $rows[] = array(array(
       'data' => t('No templates available.'), 
-      'colspan' => 4
+      'colspan' => ($export_enabled ? 5 : 4),
     ));
   }
   $rows[] = array(array(
     'data' => l(t('Create a new template'), 'admin/config/content/wysiwyg-templates/add'),
-    'colspan' => 4,
+    'colspan' => ($export_enabled ? 5 : 4),
   ));
   
-  $header = array(t('Name'), t('Description'), array('data' => t('Operations'), 'colspan' => 2));
+  $header = array(t('Name'), t('Description'), array('data' => t('Operations'), 'colspan' => ($export_enabled ? 3 : 2)));
   
   $help = t('<p>The Wysiwyg Template module allows you to create templates to be used with a Wysiwyg editor of your choice. The template button for the editor will need to be enabled from the !profiles settings. The currently supported editors are FCK Editor, CK Editor and TinyMCE.</p>', array('!profiles' => l(t('WYSIWYG Profile'), 'admin/config/content/filters')));
   
@@ -47,10 +52,10 @@ function wysiwyg_template_overview(){
 /**
  * Wysiwyg template create/modify form
  */
-function wysiwyg_template_template_form($something, $form_state) {
+function wysiwyg_template_template_form($something, $form_state, $template = NULL) {
   if(isset($form_state['confirm_delete'])){
     // Rebuild the form to confirm term deletion.
-    $form['tid'] = array('#type' => 'value', '#value' => $form_state['values']['tid']);
+    $form['name'] = array('#type' => 'value', '#value' => $form_state['values']['name']);
     $form['delete'] = array('#type' => 'value', '#value' => true);
     return confirm_form($form, 
       t('Are you sure you want to delete the template %title?', array('%title' => $form_state['values']['title'])),
@@ -61,13 +66,13 @@ function wysiwyg_template_template_form($something, $form_state) {
     );
   }
 
-  if(isset($form_state['build_info']['args'][0])){
-    // add the current values as defaults to the form, if editing an existing item
-    $form_state['values'] = $form_state['build_info']['args'][0];
+  if(!empty($template)) {
+    // Add the current values as defaults to the form, if editing an existing item.
+    $form_state['values'] = $template;
   }
   
   $form = array();
-  
+
   $form['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Template Name'),
@@ -75,6 +80,15 @@ function wysiwyg_template_template_form($something, $form_state) {
     '#description' => t('Select a name for this template.'),
     '#maxlength' => 80,
     '#required' => true
+  );
+  $form['name'] = array(
+    '#type' => 'machine_name',
+    '#maxlength' => 32,
+    '#machine_name' => array(
+      'exists' => 'wysiwyg_template_name_exists',
+      'source' => array('title'),
+    ),
+    '#description' => t('A unique machine-readable name for this template. It must only contain lowercase letters, numbers, and underscores.'),
   );
   $form['description'] = array(
     '#type' => 'textfield',
@@ -102,16 +116,17 @@ function wysiwyg_template_template_form($something, $form_state) {
     '#value' => t('Save')
   );
   
-  if(isset($form_state['values']['tid'])){
-    // if it's an existing template, offer a delete button
+  if(!empty($template)) {
+    if (!empty($form_state['values']['name'])) {
+      $form['name']['#default_value'] = $form_state['values']['name'];
+      $form['name']['#disabled'] = TRUE;
+      $form['name']['#value'] = $form_state['values']['name'];
+    }
+
+    // If it's an existing template, offer a delete button.
     $form['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete')
-    );
-    // and keep the template id going through a hidden field
-    $form['tid'] = array(
-      '#type' => 'hidden',
-      '#value' => $form_state['values']['tid'],
     );
   }
   return $form;
@@ -131,7 +146,7 @@ function wysiwyg_template_template_form_submit($form, &$form_state) {
   // delete confirmation provided
   if (isset($form_state['values']['delete'])){
     if ($form_state['values']['delete'] === TRUE) {
-      wysiwyg_template_delete_template($form_state['values']['tid']);                             
+      wysiwyg_template_delete_template($form_state['values']['name']);
       drupal_set_message(t('The template has been deleted.'));    
       $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
       return;
@@ -154,7 +169,7 @@ function wysiwyg_template_template_form_submit($form, &$form_state) {
  */
 function wysiwyg_template_delete_confirm($something, &$form_state) {
   
-  $form['tid'] = array(
+  $form['name'] = array(
     '#type' => 'value',
     '#value' => isset($form_state['build_info']['args'][0]) ? $form_state['build_info']['args'][0] : 0,
   );
@@ -174,9 +189,66 @@ function wysiwyg_template_delete_confirm($something, &$form_state) {
  */
 function wysiwyg_template_delete_confirm_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
-    wysiwyg_template_delete_template($form_state['values']['tid']);
+    wysiwyg_template_delete_template($form_state['values']['name']);
   }
 
   $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
   return;
+}
+
+/**
+ * Generate exporting code for a template.
+ */
+function wysiwyg_template_export_get_code($template, $indent = '') {
+  ctools_include('export');
+  return ctools_export_object('wysiwyg_templates', $template, $indent);
+}
+
+/**
+ * Generate a form for exporting a template.
+ */
+function wysiwyg_template_export_form($form, &$form_state, $template) {
+  $template = (object) $template;
+  drupal_set_title(check_plain($template->title));
+  $code = wysiwyg_template_export_get_code($template);
+  $lines = substr_count($code, "\n")  + 1;
+  $form['export'] = array(
+    '#title' => t('Export data'),
+    '#type' => 'textarea',
+    '#value' => $code,
+    '#rows' => $lines,
+    '#description' => t('Copy the export text and paste it into another site using the import function.'),
+  );
+
+  return $form;
+}
+
+/**
+ * Generate a form for importing a template.
+ */
+function wysiwyg_template_import_form($form, &$form_state) {
+  $form['import'] = array(
+    '#title' => t('Import data'),
+    '#type' => 'textarea',
+    '#rows' => 20,
+    '#description' => t('Paste the code from template export function.'),
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+function wysiwyg_template_import_form_submit($form, &$form_state) {
+  ctools_include('export');
+  $template = ctools_export_crud_import('wysiwyg_templates', $form_state['input']['import']);
+  if (is_object($template)) {
+    $template = (array) $template;
+    wysiwyg_template_save_template($template);
+    $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
+  }
+  else {
+    form_set_error('import', $template);
+  }
 }
