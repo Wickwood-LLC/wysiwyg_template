@@ -3,5 +3,6 @@ description = "Makes the template features for TinyMCE, CK Editor and FCK Editor
 core = 7.x
 package = User interface
 dependencies[] = wysiwyg
+files[] = wysiwyg_template.features.inc
 
 configure = admin/config/content/wysiwyg-templates

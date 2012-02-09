@@ -12,16 +12,12 @@ function wysiwyg_template_overview(){
   $rows = array();
   // load the templates and display them on the admin form
   $templateResults = db_query("SELECT * FROM {wysiwyg_templates}");
-  // Show export link when ctools is enabled.
-  $export_enabled = module_exists('ctools');
   foreach ($templateResults as $template){
     $row = array();
     $row[] = $template->title;
     $row[] = $template->description;
     $row[] = l(t('edit'), "admin/config/content/wysiwyg-templates/edit/" . $template->name);
-    if ($export_enabled) {
-      $row[] = l(t('export'), "admin/config/content/wysiwyg-templates/export/" . $template->name);
-    }
+    $row[] = l(t('export'), "admin/config/content/wysiwyg-templates/export/" . $template->name);
     $row[] = l(t('delete'), "admin/config/content/wysiwyg-templates/delete/" . $template->name);
     
     $rows[] = $row;
@@ -30,15 +26,15 @@ function wysiwyg_template_overview(){
   if (empty($rows)){
     $rows[] = array(array(
       'data' => t('No templates available.'), 
-      'colspan' => ($export_enabled ? 5 : 4),
+      'colspan' => 5,
     ));
   }
   $rows[] = array(array(
     'data' => l(t('Create a new template'), 'admin/config/content/wysiwyg-templates/add'),
-    'colspan' => ($export_enabled ? 5 : 4),
+    'colspan' => 5,
   ));
   
-  $header = array(t('Name'), t('Description'), array('data' => t('Operations'), 'colspan' => ($export_enabled ? 3 : 2)));
+  $header = array(t('Name'), t('Description'), array('data' => t('Operations'), 'colspan' => 3));
   
   $help = t('<p>The Wysiwyg Template module allows you to create templates to be used with a Wysiwyg editor of your choice. The template button for the editor will need to be enabled from the !profiles settings. The currently supported editors are FCK Editor, CK Editor and TinyMCE.</p>', array('!profiles' => l(t('WYSIWYG Profile'), 'admin/config/content/filters')));
   
@@ -200,16 +196,19 @@ function wysiwyg_template_delete_confirm_submit($form, &$form_state) {
  * Generate exporting code for a template.
  */
 function wysiwyg_template_export_get_code($template, $indent = '') {
-  ctools_include('export');
-  return ctools_export_object('wysiwyg_templates', $template, $indent);
+  $code = array();
+  $code[] = '$template = array();';
+  foreach ($template as $key => $value) {
+    $code[] = "\$template['{$key}'] = " . var_export($value, TRUE) .";";
+  }
+  return implode("\n", $code);
 }
 
 /**
  * Generate a form for exporting a template.
  */
 function wysiwyg_template_export_form($form, &$form_state, $template) {
-  $template = (object) $template;
-  drupal_set_title(check_plain($template->title));
+  drupal_set_title(check_plain($template['title']));
   $code = wysiwyg_template_export_get_code($template);
   $lines = substr_count($code, "\n")  + 1;
   $form['export'] = array(
@@ -240,15 +239,30 @@ function wysiwyg_template_import_form($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Form submit. Import the template.
+ */
 function wysiwyg_template_import_form_submit($form, &$form_state) {
-  ctools_include('export');
-  $template = ctools_export_crud_import('wysiwyg_templates', $form_state['input']['import']);
-  if (is_object($template)) {
-    $template = (array) $template;
-    wysiwyg_template_save_template($template);
+  if (!empty($form_state['input']['import'])) {
+    wysiwyg_template_import_from_code($form_state['input']['import']);
     $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
   }
   else {
     form_set_error('import', $template);
+  }
+}
+
+/**
+ * Helper function to parse template import PHP code and save the template.
+ *
+ * @param $code
+ *   String with template PHP code to parse.
+ */
+function wysiwyg_template_import_from_code($code) {
+  ob_start();
+  eval($code);
+  ob_end_clean();
+  if (!empty($template)) {
+    wysiwyg_template_save_template($template);
   }
 }
