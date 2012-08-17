@@ -18,7 +18,7 @@ function wysiwyg_template_menu() {
     'title' => 'Wysiwyg templates',
     'description' => 'Create and modify Wysiwyg templates',
     'page callback' => 'wysiwyg_template_overview',
-    'access arguments' => array('administer filters'),
+    'access arguments' => array('administer wysiwyg templates'),
     'file' => 'wysiwyg_template.admin.inc',
   );
   //list template
@@ -32,7 +32,7 @@ function wysiwyg_template_menu() {
     'title' => 'Add Template',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_template_form'),
-    'access arguments' => array('administer filters'),
+    'access arguments' => array('administer wysiwyg templates'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'wysiwyg_template.admin.inc',
   );
@@ -41,7 +41,7 @@ function wysiwyg_template_menu() {
     'title' => 'Edit Template',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_template_form', 5),
-    'access arguments' => array('administer filters'),
+    'access arguments' => array('administer wysiwyg templates'),
     'type' => MENU_CALLBACK,
     'parent' => 'admin/config/content/wysiwyg-templates',
     'file' => 'wysiwyg_template.admin.inc',
@@ -50,7 +50,7 @@ function wysiwyg_template_menu() {
     'title' => 'Import Template',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_import_form'),
-    'access arguments' => array('administer filters'),
+    'access arguments' => array('import wysiwyg templates'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'wysiwyg_template.admin.inc',
   );
@@ -58,7 +58,7 @@ function wysiwyg_template_menu() {
     'title' => 'Export Template',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_export_form', 5),
-    'access arguments' => array('administer filters'),
+    'access arguments' => array('administer wysiwyg templates'),
     'type' => MENU_CALLBACK,
     'parent' => 'admin/config/content/wysiwyg-templates',
     'file' => 'wysiwyg_template.admin.inc',
@@ -68,7 +68,7 @@ function wysiwyg_template_menu() {
     'title' => 'Delete Template',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_delete_confirm'),
-    'access arguments' => array('administer filters'),
+    'access arguments' => array('administer wysiwyg templates'),
     'file' => 'wysiwyg_template.admin.inc',
     'type' => MENU_CALLBACK,
   );
@@ -87,6 +87,23 @@ function wysiwyg_template_menu() {
     'type' => MENU_CALLBACK,
   );
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function wysiwyg_template_permission() {
+  $perms = array();
+  $perms['administer wysiwyg templates'] = array(
+    'title' => t('Administer WYSIWYG Templates'),
+    'description' => t('Create, edit and delete WYSIWYG templates.'),
+  );
+  $perms['import wysiwyg templates'] = array(
+    'title' => t('Import WYSIWYG Templates'),
+    'description' => t('Import WYSIWYG templates from exported code.'),
+    'restrict access' => TRUE,
+  );
+  return $perms;
 }
 
 /**
