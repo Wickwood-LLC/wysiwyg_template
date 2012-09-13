@@ -66,9 +66,9 @@ function wysiwyg_template_template_form($something, $form_state, $template = NUL
     // Add the current values as defaults to the form, if editing an existing item.
     $form_state['values'] = $template;
   }
-  
-  $form = array();
 
+  $form = array();
+  $form['#attributes']['enctype'] = 'multipart/form-data';
   $form['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Template Name'),
@@ -92,6 +92,32 @@ function wysiwyg_template_template_form($something, $form_state, $template = NUL
     '#default_value' => isset($form_state['values']['description']) ? $form_state['values']['description'] : '',
     '#description' => t('A description to be shown with the template.')
   );
+  // load image if it has one
+  $image = '';
+  if (isset($form_state['values']['fid']) && $form_state['values']['fid']) {
+    $image_uri = file_load($form_state['values']['fid'])->uri;
+    if ($image_uri) {
+      $image = theme('image_style', array('style_name' => 'wysiwyg_template_thumbnail', 'path' => $image_uri));
+    }
+  }
+  $form['template_image'] = array(
+    '#type' => 'file',
+    '#title' => t('Choose a file'),
+    '#size' => 22,
+    '#description' => t('A image to be shown with the template.'),
+    '#prefix' => $image,
+  );
+  $form['template_image_fid'] = array(
+    '#type' => 'hidden',
+    '#default_value' =>  isset($form_state['values']['fid']) ? $form_state['values']['fid'] : 0,
+  );
+  // add delete button if it has an image
+  if (isset($form_state['values']['fid']) && $form_state['values']['fid']) {
+    $form['template_image_delete'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Delete the Template image.')
+    );
+  }
   $form['body'] = array(
     '#type' => 'textarea',
     '#title'  => t('HTML Template'),
@@ -142,13 +168,42 @@ function wysiwyg_template_template_form_submit($form, &$form_state) {
   // delete confirmation provided
   if (isset($form_state['values']['delete'])){
     if ($form_state['values']['delete'] === TRUE) {
+      // delete image if one was uploaded
+      if (!empty($form_state['values']['template_image_fid'])) {
+        file_delete($form_state['values']['template_image_fid']);
+      }
       wysiwyg_template_delete_template($form_state['values']['name']);
       drupal_set_message(t('The template has been deleted.'));    
       $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
       return;
     }
   }
-
+  // drop image if selected and checked
+  if (isset($form_state['values']['template_image_delete']) && $form_state['values']['template_image_delete']) {
+    file_delete(file_load($form_state['values']['template_image_fid']));
+    // unset the fid previously used
+    $form_state['values']['template_image_fid'] = 0;
+  }
+  // prepare file if needed
+  $filepath = 'public://wysiwyg_template_images/';
+  file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
+  // save the image, validate it against file_validate_extensions
+  $file = file_save_upload('template_image', array('file_validate_extensions' => array('jpg png gif jpeg')), $filepath);
+  if ($file) {
+    // set status to permanent
+    $file->status = FILE_STATUS_PERMANENT;
+    $file = file_save($file);
+    if ($file) {
+      $form_state['values']['fid'] = $file->fid;
+      // delete previous file if it had one
+      if ($form_state['values']['template_image_fid']) {
+        file_delete(file_load($form_state['values']['template_image_fid']));
+      }
+    }
+  }
+  else {
+    $form_state['values']['fid'] = $form_state['values']['template_image_fid'];
+  }
   // save the template
   if(wysiwyg_template_save_template($form_state['values'])){
     drupal_set_message(t('The template has been saved.'));

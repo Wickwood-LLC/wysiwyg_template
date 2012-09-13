@@ -21,6 +21,12 @@ function wysiwyg_template_schema() {
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE),
+      'fid' => array(
+        'description' => 'The {file_managed}.fid of the image.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0),
       'body' => array(
         'description' => 'The Wysiwyg template HTML',
         'type' => 'text'),
@@ -83,4 +89,18 @@ function wysiwyg_template_update_7200() {
   }
   db_add_primary_key('wysiwyg_templates', array('name'));
   db_drop_field('wysiwyg_templates', 'tid');
+}
+
+/**
+ * Add the fid table field
+ */
+function wysiwyg_template_update_7201() {
+  // Create name field and populate it.
+  db_add_field('wysiwyg_templates', 'fid', array(
+    'description' => 'The {file_managed}.fid of the image.',
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0)
+  );
 }
