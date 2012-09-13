@@ -291,17 +291,17 @@ function wysiwyg_template_load_all(){
   $templates = array();
   foreach ($templateResults as $dbTemplate) {
     //get the image
-    $image = file_load($dbTemplate->fid)->uri;
+    $image = file_load($dbTemplate->fid);
     if ($image) {
-      $image = str_replace($base_url, "", image_style_url('wysiwyg_template_thumbnail', $image));
+      $image_uri = str_replace($base_url, "", image_style_url('wysiwyg_template_thumbnail', $image->uri));
     }
     else {
-      $image = "";
+      $image_uri = "";
     }
     $template = array(
       'title' => $dbTemplate->title,
       'description' => $dbTemplate->description,
-      'image' => $image,
+      'image' => $image_uri,
       'body' => token_replace($dbTemplate->body),
       'name' => $dbTemplate->name,
     );
