@@ -119,16 +119,17 @@ function wysiwyg_template_template_form($something, $form_state, $template = NUL
     );
   }
   $form['body'] = array(
-    '#type' => 'textarea',
+    '#type' => 'text_format',
     '#title'  => t('HTML Template'),
     '#rows'  =>  10,
+    '#format' => NULL,
     '#default_value' => isset($form_state['values']['body']) ? $form_state['values']['body'] : '',
     '#required' => true
   );
   if(module_exists('token')){
     $form['token_help'] = array(
       '#theme' => 'token_tree',
-      '#token_types' => array(),
+      '#token_types' => array('node', 'custom'),
       '#global_types' => true
     );
     $form['body']['#title'] = theme('token_help', 'node');
