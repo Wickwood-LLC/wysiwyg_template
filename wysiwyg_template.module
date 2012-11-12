@@ -319,7 +319,7 @@ function wysiwyg_template_save_template($template) {
     'title' => $template['title'],
     'description' => $template['description'],
     'fid' => $template['fid'],
-    'body' => $template['body']['value'],
+    'body' => isset($template['body']['value']) ? $template['body']['value'] : $template['body'],
   );
 
   $existing = wysiwyg_template_name_exists($template['name']);
