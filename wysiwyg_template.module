@@ -173,6 +173,10 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
   }
 }
 
+function wysiwyg_template_ckeditor_settings_alter(&$settings) {
+  $settings['templates_files'] = array(url('wysiwyg-templates/ckeditor/list'));
+}
+
 /**
  * Implements hook_features_api().
  */
