@@ -309,10 +309,10 @@ function wysiwyg_template_load_all(){
       'body' => token_replace($dbTemplate->body),
       'name' => $dbTemplate->name,
     );
-    // provide a hook to prepare the templates
-    drupal_alter('wysiwyg_templates_load', $templates);
     $templates[] = $template;
   }
+  // provide a hook to prepare the templates
+  drupal_alter('wysiwyg_templates_load', $templates);
   return $templates;
 }
 
