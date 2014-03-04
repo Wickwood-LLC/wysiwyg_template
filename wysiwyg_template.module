@@ -4,8 +4,8 @@
  * @file
  * Makes TinyMCE Templates available as plugin for client-side editors integrated via
  * Wysiwyg API.
+ * Test from jurgenhaas
  */
-
  
  /**
  * Implementation of hook_menu().
