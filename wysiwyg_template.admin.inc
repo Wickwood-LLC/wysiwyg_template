@@ -8,55 +8,108 @@
 /**
  * Wysiwyg template overview page - view templates and edit them
  */
-function wysiwyg_template_overview() {
-  $rows = array();
-  // load the templates and display them on the admin form
-  $templateResults = db_query("SELECT * FROM {wysiwyg_templates}");
-  foreach ($templateResults as $template) {
-    $row = array();
-    $row[] = $template->title;
-    $row[] = $template->description;
-    $row[] = l(t('edit'), "admin/config/content/wysiwyg-templates/edit/" . $template->name);
-    $row[] = l(t('export'), "admin/config/content/wysiwyg-templates/export/" . $template->name);
-    $row[] = l(t('delete'), "admin/config/content/wysiwyg-templates/delete/" . $template->name);
+function wysiwyg_template_overview($form, $form_state) {
+  $templates = db_select('wysiwyg_templates', 't')
+    ->fields('t')
+    ->orderBy('t.weight')
+    ->execute()
+    ->fetchAll();
 
-    $rows[] = $row;
-  }
+  $form['wysiwyg_templates'] = array(
+    '#tree' => TRUE,
+  );
 
-  if (empty($rows)) {
-    $rows[] = array(
-      array(
-        'data' => t('No templates available.'),
-        'colspan' => 5,
-      )
+  if (empty($templates)) {
+    $form['info_empty'] = array(
+      '#markup' => t('No templates available.') . ' ' . l(t('Add you first template.'), 'admin/config/content/wysiwyg-templates/add'),
+      '#weight' => 10,
     );
   }
-  $rows[] = array(
-    array(
-      'data' => l(t('Create a new template'), 'admin/config/content/wysiwyg-templates/add'),
-      'colspan' => 5,
-    )
-  );
+  else {
+    $order = 0;
+    foreach ($templates as $template) {
+      $form['wysiwyg_templates'][$template->name]['#template'] = (object) array(
+        'name' => $template->name,
+        'title' => $template->title,
+        'description' => $template->description,
+        'weight' => $order,
+      );
+      $form['wysiwyg_templates'][$template->name]['#weight'] = $order;
+      $form['wysiwyg_templates'][$template->name]['weight'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Weight for @title', array('@title' => $template->title)),
+        '#title_display' => 'invisible',
+        '#size' => 4,
+        '#default_value' => $order,
+        '#attributes' => array('class' => array('template-weight')),
+      );
+      $order++;
+    }
 
-  $header = array(
-    t('Name'),
-    t('Description'),
-    array('data' => t('Operations'), 'colspan' => 3)
-  );
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save order'),
+      '#submit' => array('wysiwyg_template_overview_submit'),
+    );
+  }
 
-  $help = t('<p>The Wysiwyg Template module allows you to create templates to be used with a Wysiwyg editor of your choice. The template button for the editor will need to be enabled from the !profiles settings. The currently supported editors are FCK Editor, CK Editor and TinyMCE.</p>', array('!profiles' => l(t('WYSIWYG Profile'), 'admin/config/content/filters')));
+  return $form;
+}
 
-  return $help . theme('table', array(
-    'header' => $header,
-    'rows' => $rows,
-    'id' => 'wysiwyg_template'
-  ));
+/**
+ * Form submit function. Update the template weights.
+ */
+function wysiwyg_template_overview_submit($form, &$form_state) {
+  foreach ($form_state['values']['wysiwyg_templates'] as $name => $template_values) {
+    db_update('wysiwyg_templates')
+      ->fields(array('weight' => $template_values['weight']))
+      ->condition('name', $name)
+      ->execute();
+  }
+  drupal_set_message(t('The Wysiwyg template settings have been updated.'));
+}
+
+/**
+ * Returns HTML for the wysiwyg template order form.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - form: A render element representing the form.
+ *
+ * @ingroup themeable
+ */
+function theme_wysiwyg_template_overview($variables) {
+  $form = $variables['form'];
+
+  $rows = array();
+  $header = array(t('Name'), t('Weight'), t('Description'), array('data' => t('Operations'), 'colspan' => 3));
+  foreach (element_children($form['wysiwyg_templates']) as $name) {
+    $title = $form['wysiwyg_templates'][$name]['#template']->title;
+    $row = array();
+    $row[] = check_plain($title);
+    $row[] = drupal_render($form['wysiwyg_templates'][$name]['weight']);
+    $row[] = check_plain($form['wysiwyg_templates'][$name]['#template']->description);
+    $row[] = l(t('edit'), 'admin/config/content/wysiwyg-templates/' . $name . '/edit');
+    $row[] = l(t('export'), 'admin/config/content/wysiwyg-templates/' . $name . '/export');
+    $row[] = l(t('delete'), 'admin/config/content/wysiwyg-templates/' . $name . '/delete');
+
+    $rows[] = array('data' => $row, 'class' => array('draggable'));
+  }
+
+  drupal_add_tabledrag('wysiwyg-templates', 'order', 'sibling', 'template-weight');
+
+  $output = '<p>' . t('The Wysiwyg Template module allows you to create templates to be used with a Wysiwyg editor of your choice. The template button for the editor will need to be enabled from the !profiles settings. The currently supported editors are FCK Editor, CK Editor and TinyMCE.', array('!profiles' => l(t('WYSIWYG Profile'), 'admin/config/content/filters'))) . '</p>';
+  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'wysiwyg-templates')));
+  $output .= drupal_render_children($form);
+
+  return $output;
 }
 
 /**
  * Wysiwyg template create/modify form
  */
-function wysiwyg_template_template_form($something, $form_state, $template = NULL) {
+function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
   if (isset($form_state['confirm_delete'])) {
     // Rebuild the form to confirm term deletion.
     $form['name'] = array(
@@ -102,6 +155,12 @@ function wysiwyg_template_template_form($something, $form_state, $template = NUL
     '#title' => t('Template Description'),
     '#default_value' => isset($form_state['values']['description']) ? $form_state['values']['description'] : '',
     '#description' => t('A description to be shown with the template.')
+  );
+  $form['weight'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Weight'),
+    '#default_value' => isset($form_state['values']['weight']) ? $form_state['values']['weight'] : 0,
+    '#description' => t('The weight of this template for the sort order in lists.')
   );
   // load image if it has one
   $image = '';
@@ -233,14 +292,10 @@ function wysiwyg_template_template_form_submit($form, &$form_state) {
 /**
  * Menu callback -- ask for confirmation of rule deletion.
  */
-function wysiwyg_template_delete_confirm($something, &$form_state) {
+function wysiwyg_template_delete_confirm($form, &$form_state, $template) {
 
-  $form['name'] = array(
-    '#type' => 'value',
-    '#value' => isset($form_state['build_info']['args'][0]) ? $form_state['build_info']['args'][0] : 0,
-  );
+  $form['#wysiwyg_template'] = $template;
 
-  $template = wysiwyg_template_load_template(isset($form_state['build_info']['args'][0]) ? $form_state['build_info']['args'][0] : 0);
   return confirm_form($form,
     t('Are you sure you want to delete the template %title?', array('%title' => $template['title'])),
     isset($_GET['destination']) ? $_GET['destination'] : 'admin/config/content/wysiwyg-templates',
@@ -255,7 +310,7 @@ function wysiwyg_template_delete_confirm($something, &$form_state) {
  */
 function wysiwyg_template_delete_confirm_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
-    wysiwyg_template_delete_template($form_state['values']['name']);
+    wysiwyg_template_delete_template($form['#wysiwyg_template']['name']);
   }
 
   $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
@@ -318,7 +373,7 @@ function wysiwyg_template_import_form_submit($form, &$form_state) {
     $form_state['redirect'] = 'admin/config/content/wysiwyg-templates';
   }
   else {
-    form_set_error('import', $template);
+    form_set_error('import', '$template');
   }
 }
 

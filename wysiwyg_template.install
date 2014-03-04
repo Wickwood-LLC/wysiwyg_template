@@ -34,8 +34,17 @@ function wysiwyg_template_schema() {
         'description' => 'The Wysiwyg template HTML',
         'type' => 'text'
       ),
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The weight of this template in listings and the user interface.',
+      ),
     ),
     'primary key' => array('name'),
+    'indexes' => array(
+      'weight' => array('weight'),
+    ),
   );
 
   $schema['wysiwyg_templates_default'] = array(
@@ -139,5 +148,16 @@ function wysiwyg_template_update_7202() {
   if (!db_table_exists('wysiwyg_templates_default')) {
     $schema = wysiwyg_template_schema();
     db_create_table('wysiwyg_templates_default', $schema['wysiwyg_templates_default']);
+  }
+}
+
+/**
+ * Add weight field to the table wysiwyg_templates
+ */
+function wysiwyg_template_update_7203() {
+  if (!db_field_exists('wysiwyg_templates', 'weight')) {
+    $schema = wysiwyg_template_schema();
+    db_add_field('wysiwyg_templates', 'weight', $schema['wysiwyg_templates']['fields']['weight']);
+    db_add_index('wysiwyg_templates', 'weight', $schema['wysiwyg_templates']['indexes']['weight']);
   }
 }

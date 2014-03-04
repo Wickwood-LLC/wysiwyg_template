@@ -16,15 +16,11 @@ function wysiwyg_template_menu() {
   $items['admin/config/content/wysiwyg-templates'] = array(
     'title' => 'Wysiwyg templates',
     'description' => 'Create and modify Wysiwyg templates',
-    'page callback' => 'wysiwyg_template_overview',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wysiwyg_template_overview'),
     'access arguments' => array('administer wysiwyg templates'),
     'file' => 'wysiwyg_template.admin.inc',
-  );
-  //list template
-  $items['admin/config/content/wysiwyg-templates/list'] = array(
-    'title' => 'List Templates',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => -10,
+    'weight' => 10,
   );
   // add template
   $items['admin/config/content/wysiwyg-templates/add'] = array(
@@ -32,45 +28,48 @@ function wysiwyg_template_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_template_form'),
     'access arguments' => array('administer wysiwyg templates'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_ACTION,
     'file' => 'wysiwyg_template.admin.inc',
   );
-  // edit template
-  $items['admin/config/content/wysiwyg-templates/edit/%wysiwyg_template'] = array(
-    'title' => 'Edit Template',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('wysiwyg_template_template_form', 5),
-    'access arguments' => array('administer wysiwyg templates'),
-    'type' => MENU_CALLBACK,
-    'parent' => 'admin/config/content/wysiwyg-templates',
-    'file' => 'wysiwyg_template.admin.inc',
-  );
+  // import template
   $items['admin/config/content/wysiwyg-templates/import'] = array(
     'title' => 'Import Template',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('wysiwyg_template_import_form'),
     'access arguments' => array('import wysiwyg templates'),
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_LOCAL_ACTION,
     'file' => 'wysiwyg_template.admin.inc',
   );
-  $items['admin/config/content/wysiwyg-templates/export/%wysiwyg_template'] = array(
+
+  // edit template
+  $items['admin/config/content/wysiwyg-templates/%wysiwyg_template/edit'] = array(
+    'title' => 'Edit Template',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wysiwyg_template_template_form', 4),
+    'access arguments' => array('administer wysiwyg templates'),
+    'type' => MENU_CALLBACK,
+    'parent' => 'admin/config/content/wysiwyg-templates',
+    'file' => 'wysiwyg_template.admin.inc',
+  );
+  $items['admin/config/content/wysiwyg-templates/%wysiwyg_template/export'] = array(
     'title' => 'Export Template',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('wysiwyg_template_export_form', 5),
+    'page arguments' => array('wysiwyg_template_export_form', 4),
     'access arguments' => array('administer wysiwyg templates'),
     'type' => MENU_CALLBACK,
     'parent' => 'admin/config/content/wysiwyg-templates',
     'file' => 'wysiwyg_template.admin.inc',
   );
   //delete template
-  $items['admin/config/content/wysiwyg-templates/delete'] = array(
+  $items['admin/config/content/wysiwyg-templates/%wysiwyg_template/delete'] = array(
     'title' => 'Delete Template',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('wysiwyg_template_delete_confirm'),
+    'page arguments' => array('wysiwyg_template_delete_confirm', 4),
     'access arguments' => array('administer wysiwyg templates'),
     'file' => 'wysiwyg_template.admin.inc',
     'type' => MENU_CALLBACK,
   );
+
   // javascript template list
   $items['wysiwyg-templates/%/list'] = array(
     'page callback' => 'wysiwyg_template_list_js',
@@ -103,6 +102,19 @@ function wysiwyg_template_permission() {
     'restrict access' => TRUE,
   );
   return $perms;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function wysiwyg_template_theme() {
+  $x=1;
+  return array(
+    'wysiwyg_template_overview' => array(
+      'render element' => 'form',
+      'file' => 'wysiwyg_template.admin.inc',
+    ),
+  );
 }
 
 /**
@@ -279,6 +291,7 @@ function wysiwyg_template_load_template($name) {
     $tItem = array(
       'title' => $template->title,
       'description' => $template->description,
+      'weight' => $template->weight,
       'fid' => $template->fid,
       'body' => $template->body,
       'name' => $name,
@@ -293,7 +306,7 @@ function wysiwyg_template_load_template($name) {
  */
 function wysiwyg_template_load_all($for_select = FALSE, $include_none = FALSE) {
   global $base_url;
-  $templateResults = db_query("SELECT * FROM {wysiwyg_templates}");
+  $templateResults = db_query("SELECT * FROM {wysiwyg_templates} order by weight");
   $templates = array();
   foreach ($templateResults as $dbTemplate) {
     //get the image
@@ -307,6 +320,7 @@ function wysiwyg_template_load_all($for_select = FALSE, $include_none = FALSE) {
     $template = array(
       'title' => $dbTemplate->title,
       'description' => $dbTemplate->description,
+      'weight' => $dbTemplate->weight,
       'image' => $image_uri,
       'body' => token_replace($dbTemplate->body),
       'name' => $dbTemplate->name,
@@ -334,6 +348,7 @@ function wysiwyg_template_save_template($template) {
     'name' => $template['name'],
     'title' => $template['title'],
     'description' => $template['description'],
+    'weight' => $template['weight'],
     'fid' => $template['fid'],
     'body' => (isset($template['body']['value']) && strlen($template['body']['value']) > 1) ? $template['body']['value'] : $template['body'],
   );
