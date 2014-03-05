@@ -316,6 +316,14 @@ function wysiwyg_template_load_template_content_types($name) {
 }
 
 /**
+ * Implements hook_node_type_delete().
+ */
+function wysiwyg_template_node_type_delete($info) {
+  db_query("DELETE FROM {wysiwyg_templates_content_types} WHERE type = :type", array(':type' => $info->type));
+  db_query("DELETE FROM {wysiwyg_templates_default} WHERE type = :type", array(':type' => $info->type));
+}
+
+/**
  * Wysiwyg load all templates from the database
  */
 function wysiwyg_template_load_all($for_select = FALSE, $include_none = FALSE) {
