@@ -108,7 +108,6 @@ function wysiwyg_template_permission() {
  * Implements hook_theme().
  */
 function wysiwyg_template_theme() {
-  $x=1;
   return array(
     'wysiwyg_template_overview' => array(
       'render element' => 'form',
@@ -295,10 +294,25 @@ function wysiwyg_template_load_template($name) {
       'fid' => $template->fid,
       'body' => $template->body,
       'name' => $name,
+      'content_types' => wysiwyg_template_load_template_content_types($name),
     );
   }
 
   return $tItem;
+}
+
+/**
+ * Provide a list of content types for which the template $name is limited to.
+ */
+function wysiwyg_template_load_template_content_types($name) {
+  $query = db_select('wysiwyg_templates_content_types', 'wc');
+  $query->join('node_type', 'nt', 'wc.type = nt.type');
+  return $query
+    ->fields('wc', array('type'))
+    ->fields('nt', array('name'))
+    ->condition('wc.name', $name)
+    ->execute()
+    ->fetchAllKeyed();
 }
 
 /**
@@ -356,13 +370,28 @@ function wysiwyg_template_save_template($template) {
   $existing = wysiwyg_template_name_exists($template['name']);
 
   // Save to database.
-  return drupal_write_record('wysiwyg_templates', $new_template, ($existing ? 'name' : array()));
+  if (drupal_write_record('wysiwyg_templates', $new_template, ($existing ? 'name' : array()))) {
+    db_query("DELETE FROM {wysiwyg_templates_content_types} WHERE name = :name", array(':name' => $template['name']));
+    foreach ($template['content_types'] as $type) {
+      if (!empty($type)) {
+        $values = array(
+          'name' => $template['name'],
+          'type' => $type,
+        );
+        drupal_write_record('wysiwyg_templates_content_types', $values);
+      }
+    }
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**
  * Wysiwyg template database delete function
  */
 function wysiwyg_template_delete_template($name) {
+  db_query("DELETE FROM {wysiwyg_templates_content_types} WHERE name = :name", array(':name' => $name));
+  db_query("DELETE FROM {wysiwyg_templates_default} WHERE name = :name", array(':name' => $name));
   db_query("DELETE FROM {wysiwyg_templates} WHERE name = :name", array(':name' => $name));
 }
 

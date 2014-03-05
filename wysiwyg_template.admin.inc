@@ -33,6 +33,7 @@ function wysiwyg_template_overview($form, $form_state) {
         'title' => $template->title,
         'description' => $template->description,
         'weight' => $order,
+        'content_types' => wysiwyg_template_load_template_content_types($template->name),
       );
       $form['wysiwyg_templates'][$template->name]['#weight'] = $order;
       $form['wysiwyg_templates'][$template->name]['weight'] = array(
@@ -83,13 +84,14 @@ function theme_wysiwyg_template_overview($variables) {
   $form = $variables['form'];
 
   $rows = array();
-  $header = array(t('Name'), t('Weight'), t('Description'), array('data' => t('Operations'), 'colspan' => 3));
+  $header = array(t('Name'), t('Weight'), t('Description'), t('Limited to content types'), array('data' => t('Operations'), 'colspan' => 3));
   foreach (element_children($form['wysiwyg_templates']) as $name) {
     $title = $form['wysiwyg_templates'][$name]['#template']->title;
     $row = array();
     $row[] = check_plain($title);
     $row[] = drupal_render($form['wysiwyg_templates'][$name]['weight']);
     $row[] = check_plain($form['wysiwyg_templates'][$name]['#template']->description);
+    $row[] = check_plain(implode(', ', $form['wysiwyg_templates'][$name]['#template']->content_types));
     $row[] = l(t('edit'), 'admin/config/content/wysiwyg-templates/' . $name . '/edit');
     $row[] = l(t('export'), 'admin/config/content/wysiwyg-templates/' . $name . '/export');
     $row[] = l(t('delete'), 'admin/config/content/wysiwyg-templates/' . $name . '/delete');
@@ -131,6 +133,11 @@ function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
     $form_state['values'] = $template;
   }
 
+  $content_types = array();
+  foreach (node_type_get_types() as $content_type) {
+    $content_types[$content_type->type] = $content_type->name;
+  }
+
   $form = array();
   $form['#attributes']['enctype'] = 'multipart/form-data';
   $form['title'] = array(
@@ -154,13 +161,21 @@ function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
     '#type' => 'textfield',
     '#title' => t('Template Description'),
     '#default_value' => isset($form_state['values']['description']) ? $form_state['values']['description'] : '',
-    '#description' => t('A description to be shown with the template.')
+    '#description' => t('A description to be shown with the template.'),
   );
   $form['weight'] = array(
     '#type' => 'textfield',
     '#title' => t('Weight'),
     '#default_value' => isset($form_state['values']['weight']) ? $form_state['values']['weight'] : 0,
-    '#description' => t('The weight of this template for the sort order in lists.')
+    '#description' => t('The weight of this template for the sort order in lists.'),
+  );
+  $form['content_types'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Available for content types'),
+    '#options' => $content_types,
+    '#default_value' => isset($form_state['values']['content_types']) ? array_keys($form_state['values']['content_types']) : array(),
+    '#description' => t('If you select no content type, this template will be available for all content types.'),
+    '#access' => (count($content_types) > 1),
   );
   // load image if it has one
   $image = '';
