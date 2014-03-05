@@ -71,9 +71,9 @@ function wysiwyg_template_menu() {
   );
 
   // javascript template list
-  $items['wysiwyg-templates/%/list'] = array(
+  $items['wysiwyg-templates/%/%/list'] = array(
     'page callback' => 'wysiwyg_template_list_js',
-    'page arguments' => array(1),
+    'page arguments' => array(1, 2),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
@@ -131,6 +131,16 @@ function wysiwyg_template_load($name) {
 }
 
 /**
+ * Callback to determine the correct URL which allows the editor to receive
+ * the list of templates.
+ *
+ * @param $editorName
+ */
+function _wysiwyg_template_get_list_url($editorName) {
+  return url('wysiwyg-templates/' . $editorName . '/' . _wysiwyg_template_set_node_type() . '/list');
+}
+
+/**
  * Implementation of hook_wysiwyg_plugin().
  */
 function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
@@ -142,7 +152,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
           'url' => 'http://drupal.org/project/wysiwyg_template',
           'internal' => TRUE,
           'options' => array(
-            'template_external_list_url' => url('wysiwyg-templates/' . $editorName . '/list'),
+            'template_external_list_url' => _wysiwyg_template_get_list_url($editorName),
             //load the javascript template list
             //'template_selected_content_classes' => variable_get('wysiwyg_template_selected_content_classes', ''),
             //'template_replace_values' => array('caption' => 'Replace with this content')
@@ -161,7 +171,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
           'url' => 'http://drupal.org/project/wysiwyg_template',
           'internal' => TRUE,
           'options' => array(
-            'templates_files' => array(url('wysiwyg-templates/' . $editorName . '/list')),
+            'templates_files' => array(_wysiwyg_template_get_list_url($editorName)),
             //load the javascript template list
             'templates_replaceContent' => false,
           ),
@@ -176,7 +186,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
           'url' => 'http://drupal.org/project/wysiwyg_template',
           'internal' => TRUE,
           'options' => array(
-            'TemplatesXmlPath' => array(url('wysiwyg-templates/' . $editorName . '/list')),
+            'TemplatesXmlPath' => array(_wysiwyg_template_get_list_url($editorName)),
             //load the javascript template list
           ),
           'load' => FALSE,
@@ -187,7 +197,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
 }
 
 function wysiwyg_template_ckeditor_settings_alter(&$settings) {
-  $settings['templates_files'] = array(url('wysiwyg-templates/ckeditor/list'));
+  $settings['templates_files'] = array(_wysiwyg_template_get_list_url('ckeditor'));
 }
 
 /**
@@ -208,13 +218,13 @@ function wysiwyg_template_features_api() {
 /**
  * Generate javascript for template loading
  */
-function wysiwyg_template_list_js($editorName) {
+function wysiwyg_template_list_js($editorName, $contentType) {
   global $base_url;
   //don't cache templates
   drupal_add_http_header('CacheControl', 'no-cache');
   drupal_add_http_header('Expires', '-1');
   drupal_add_http_header('Content-Type', 'text/javascript; charset=UTF-8');
-  $templates = wysiwyg_template_load_all();
+  $templates = wysiwyg_template_load_all($contentType);
   switch ($editorName) {
     case 'tinymce':
       print 'var tinyMCETemplateList = ';
@@ -326,11 +336,27 @@ function wysiwyg_template_node_type_delete($info) {
 /**
  * Wysiwyg load all templates from the database
  */
-function wysiwyg_template_load_all($for_select = FALSE, $include_none = FALSE) {
+function wysiwyg_template_load_all($contentType = '_', $forSelect = FALSE, $includeNone = FALSE) {
   global $base_url;
   $templateResults = db_query("SELECT * FROM {wysiwyg_templates} order by weight");
   $templates = array();
   foreach ($templateResults as $dbTemplate) {
+    // Check, if the template is limited to a content type.
+    if ($contentType != '_') {
+      $types = db_select('wysiwyg_templates_content_types', 'wc')
+        ->fields('wc', array('type'))
+        ->condition('wc.name', $dbTemplate->name)
+        ->execute()
+        ->fetchCol();
+      if (!empty($types)) {
+        // The template is limited and we now check it.
+        if (!in_array($contentType, $types)) {
+          // Do not include this template.
+          continue;
+        }
+      }
+    }
+
     //get the image
     $image = file_load($dbTemplate->fid);
     if ($image) {
@@ -351,11 +377,11 @@ function wysiwyg_template_load_all($for_select = FALSE, $include_none = FALSE) {
   }
   // provide a hook to prepare the templates
   drupal_alter('wysiwyg_templates_load', $templates);
-  if (!$for_select) {
+  if (!$forSelect) {
     return $templates;
   }
 
-  $template_select = $include_none ? array('' => '-' . t('none') . '-') : array();
+  $template_select = $includeNone ? array('' => '-' . t('none') . '-') : array();
   foreach ($templates as $template) {
     $template_select[$template['name']] = $template['title'];
   }
@@ -443,7 +469,7 @@ function wysiwyg_template_form_node_type_form_alter(&$form, &$form_state, $form_
   $form['wysiwyg_template']['wysiwyg_template_default'] = array(
     '#type' => 'select',
     '#title' => t('Default template for this content type'),
-    '#options' => wysiwyg_template_load_all(TRUE, TRUE),
+    '#options' => wysiwyg_template_load_all($type, TRUE, TRUE),
     '#default_value' => wysiwyg_template_load_default($type),
   );
   $form['#submit'][] = 'wysiwyg_template_form_node_type_form_submit';
@@ -481,6 +507,7 @@ function wysiwyg_template_load_default($type) {
  * Implements hook_form_FORM_ID_alter().
  */
 function wysiwyg_template_form_node_form_alter(&$form, &$form_state, $form_id) {
+  _wysiwyg_template_set_node_type($form['type']['#value']);
   if (!empty($form['nid']['#value'])) {
     // This is an existing node and we do *not* apply a template.
     return;
@@ -500,4 +527,16 @@ function wysiwyg_template_form_node_form_alter(&$form, &$form_state, $form_id) {
   }
 
   $form['body'][LANGUAGE_NONE][0]['#default_value'] = $body;
+}
+
+/**
+ * Callback to set/get the content type of the current node, defaults to '_'.
+ */
+function _wysiwyg_template_set_node_type($type = NULL) {
+  static $content_type;
+  if (isset($type)) {
+    $content_type = $type;
+  }
+
+  return isset($content_type) ? $content_type : '_';
 }
