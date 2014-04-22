@@ -303,6 +303,7 @@ function wysiwyg_template_load_template($name) {
       'weight' => $template->weight,
       'fid' => $template->fid,
       'body' => $template->body,
+      'format' => $template->format,
       'name' => $name,
       'content_types' => wysiwyg_template_load_template_content_types($name),
     );
@@ -371,6 +372,7 @@ function wysiwyg_template_load_all($contentType = '_', $forSelect = FALSE, $incl
       'weight' => $dbTemplate->weight,
       'image' => $image_uri,
       'body' => token_replace($dbTemplate->body),
+      'format' => $dbTemplate->format,
       'name' => $dbTemplate->name,
     );
     $templates[] = $template;
@@ -398,7 +400,9 @@ function wysiwyg_template_save_template($template) {
     'description' => $template['description'],
     'weight' => $template['weight'],
     'fid' => $template['fid'],
-    'body' => (isset($template['body']['value']) && strlen($template['body']['value']) > 1) ? $template['body']['value'] : $template['body'],
+    'body' => $template['body'],
+    // Avoid PHP Notice when importing templates without format.
+    'format' => isset($template['format']) ? $template['format'] : filter_fallback_format(),
   );
 
   $existing = wysiwyg_template_name_exists($template['name']);
