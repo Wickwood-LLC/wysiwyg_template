@@ -406,11 +406,11 @@ function wysiwyg_template_save_template($template) {
   // Save to database.
   if (drupal_write_record('wysiwyg_templates', $new_template, ($existing ? 'name' : array()))) {
     db_query("DELETE FROM {wysiwyg_templates_content_types} WHERE name = :name", array(':name' => $template['name']));
-    foreach ($template['content_types'] as $type) {
+    foreach ($template['content_types'] as $name => $type) {
       if (!empty($type)) {
         $values = array(
           'name' => $template['name'],
-          'type' => $type,
+          'type' => $name,
         );
         drupal_write_record('wysiwyg_templates_content_types', $values);
       }
