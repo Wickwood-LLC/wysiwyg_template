@@ -29,8 +29,20 @@ class TemplateListBuilder extends ConfigEntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
-    // You probably want a few more properties here...
+
     return $row + parent::buildRow($entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function render() {
+    $build = parent::render();
+
+    // Better empty text.
+    $build['table']['#empty'] = $this->t('There are no WYSIWYG templates yet.');
+
+    return $build;
   }
 
 }
