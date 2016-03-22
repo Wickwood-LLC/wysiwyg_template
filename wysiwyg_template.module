@@ -160,7 +160,10 @@ function wysiwyg_template_load($name) {
  * @param $editorName
  */
 function _wysiwyg_template_get_list_url($editorName) {
-  return url('wysiwyg-templates/' . $editorName . '/' . _wysiwyg_template_set_node_type() . '/list');
+  // @FIXME
+// url() expects a route name or an external URI.
+// return url('wysiwyg-templates/' . $editorName . '/' . _wysiwyg_template_set_node_type() . '/list');
+
 }
 
 /**
@@ -253,11 +256,14 @@ function wysiwyg_template_list_js($editorName, $contentType) {
       print 'var tinyMCETemplateList = ';
       $outArray = array();
       foreach ($templates as $template) {
-        $outArray[] = array(
-          $template['title'],
-          url('wysiwyg-templates/' . $editorName . '/load/') . $template['name'],
-          $template['description'],
-        );
+        // @FIXME
+// url() expects a route name or an external URI.
+// $outArray[] = array(
+//           $template['title'],
+//           url('wysiwyg-templates/' . $editorName . '/load/') . $template['name'],
+//           $template['description'],
+//         );
+
       }
       print json_encode($outArray) . ";";
       break;
@@ -276,8 +282,8 @@ function wysiwyg_template_list_js($editorName, $contentType) {
       print '<?xml version="1.0" encoding="utf-8" ?>';
       print '<Templates imagesBasePath="">';
       foreach ($templates as $template) {
-        print '<Template title="' . check_plain($template['title']) . '" image="">';
-        print '<Description>' . check_plain($template['description']) . '</Description>';
+        print '<Template title="' . \Drupal\Component\Utility\Html::escape($template['title']) . '" image="">';
+        print '<Description>' . \Drupal\Component\Utility\Html::escape($template['description']) . '</Description>';
         print '<Html><![CDATA[';
         print $template['body'];
         print ']]></Html></Template>';
@@ -309,7 +315,7 @@ function wysiwyg_template_html_print($body, $editorName) {
  */
 function wysiwyg_template_html_load($name) {
   $template = wysiwyg_template_load_template($name);
-  return module_exists('token') ? token_replace($template['body']) : $template['body'];
+  return \Drupal::moduleHandler()->moduleExists('token') ? \Drupal::token()->replace($template['body']) : $template['body'];
 }
 
 /**
@@ -394,14 +400,14 @@ function wysiwyg_template_load_all($contentType = '_', $forSelect = FALSE, $incl
       'description' => $dbTemplate->description,
       'weight' => $dbTemplate->weight,
       'image' => $image_uri,
-      'body' => token_replace($dbTemplate->body),
+      'body' => \Drupal::token()->replace($dbTemplate->body),
       'format' => $dbTemplate->format,
       'name' => $dbTemplate->name,
     );
     $templates[] = $template;
   }
   // provide a hook to prepare the templates
-  drupal_alter('wysiwyg_templates_load', $templates);
+  \Drupal::moduleHandler()->alter('wysiwyg_templates_load', $templates);
   if (!$forSelect) {
     return $templates;
   }
@@ -431,7 +437,7 @@ function wysiwyg_template_save_template($template) {
   $existing = wysiwyg_template_name_exists($template['name']);
 
   // Save to database.
-  if (drupal_write_record('wysiwyg_templates', $new_template, ($existing ? 'name' : array()))) {
+  if (\Drupal::database()->merge('wysiwyg_templates')->fields($new_template)->key(($existing ? 'name' : array()))->execute()) {
     db_query("DELETE FROM {wysiwyg_templates_content_types} WHERE name = :name", array(':name' => $template['name']));
     foreach ($template['content_types'] as $name => $type) {
       if (!empty($type)) {
@@ -439,7 +445,7 @@ function wysiwyg_template_save_template($template) {
           'name' => $template['name'],
           'type' => $name,
         );
-        drupal_write_record('wysiwyg_templates_content_types', $values);
+        \Drupal::database()->insert('wysiwyg_templates_content_types')->fields($values)->execute();
       }
     }
     return TRUE;
@@ -553,7 +559,7 @@ function wysiwyg_template_form_node_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
-  $form['body'][LANGUAGE_NONE][0]['#default_value'] = $body;
+  $form['body'][\Drupal\Core\Language\Language::LANGCODE_NOT_SPECIFIED][0]['#default_value'] = $body;
 }
 
 /**

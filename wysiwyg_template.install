@@ -143,7 +143,7 @@ function wysiwyg_template_update_7200() {
       do {
         // Append an incrementing numeric suffix until we find a unique name.
         $unique_suffix = '_' . $i;
-        $new_name = truncate_utf8($tmp_name, 128 - drupal_strlen($unique_suffix, TRUE)) . $unique_suffix;
+        $new_name = \Drupal\Component\Utility\Unicode::truncate($tmp_name, 128 - \Drupal\Component\Utility\Unicode::strlen($unique_suffix, TRUE)) . $unique_suffix;
         $i++;
       } while (wysiwyg_template_name_exists($new_name));
     }

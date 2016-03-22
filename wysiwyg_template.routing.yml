@@ -1,0 +1,48 @@
+wysiwyg_template.overview:
+  path: /admin/config/content/wysiwyg-templates
+  defaults:
+    _title: 'Wysiwyg templates'
+    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateOverview
+  requirements:
+    _permission: 'administer wysiwyg templates'
+wysiwyg_template.template_form:
+  path: '/admin/config/content/wysiwyg-templates/{template}/edit'
+  defaults:
+    template: null
+    _title: 'Edit Template'
+    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateTemplateForm
+  requirements:
+    _permission: 'administer wysiwyg templates'
+wysiwyg_template.import_form:
+  path: /admin/config/content/wysiwyg-templates/import
+  defaults:
+    _title: 'Import Template'
+    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateImportForm
+  requirements:
+    _permission: 'import wysiwyg templates'
+wysiwyg_template.export_form:
+  path: '/admin/config/content/wysiwyg-templates/{template}/export'
+  defaults:
+    _title: 'Export Template'
+    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateExportForm
+  requirements:
+    _permission: 'administer wysiwyg templates'
+wysiwyg_template.delete_confirm:
+  path: '/admin/config/content/wysiwyg-templates/{template}/delete'
+  defaults:
+    _title: 'Delete Template'
+    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateDeleteConfirm
+  requirements:
+    _permission: 'administer wysiwyg templates'
+wysiwyg_template.list_js:
+  path: '/wysiwyg-templates/{editorName}/{contentType}/list'
+  defaults:
+    _controller: '\Drupal\wysiwyg_template\Controller\DefaultController::wysiwyg_template_list_js'
+  requirements:
+    _permission: 'access content'
+wysiwyg_template.html_print:
+  path: '/wysiwyg-templates/{editorName}/load/{body}'
+  defaults:
+    _controller: '\Drupal\wysiwyg_template\Controller\DefaultController::wysiwyg_template_html_print'
+  requirements:
+    _permission: 'access content'

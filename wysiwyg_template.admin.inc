@@ -20,10 +20,13 @@ function wysiwyg_template_overview($form, $form_state) {
   );
 
   if (empty($templates)) {
-    $form['info_empty'] = array(
-      '#markup' => t('No templates available.') . ' ' . l(t('Add you first template.'), 'admin/config/content/wysiwyg-templates/add'),
-      '#weight' => 10,
-    );
+    // @FIXME
+// l() expects a Url object, created from a route name or external URI.
+// $form['info_empty'] = array(
+//       '#markup' => t('No templates available.') . ' ' . l(t('Add you first template.'), 'admin/config/content/wysiwyg-templates/add'),
+//       '#weight' => 10,
+//     );
+
   }
   else {
     $order = 0;
@@ -85,24 +88,52 @@ function theme_wysiwyg_template_overview($variables) {
 
   $rows = array();
   $header = array(t('Name'), t('Weight'), t('Description'), t('Limited to content types'), array('data' => t('Operations'), 'colspan' => 3));
-  foreach (element_children($form['wysiwyg_templates']) as $name) {
+  foreach (\Drupal\Core\Render\Element::children($form['wysiwyg_templates']) as $name) {
     $title = $form['wysiwyg_templates'][$name]['#template']->title;
     $row = array();
-    $row[] = check_plain($title);
-    $row[] = drupal_render($form['wysiwyg_templates'][$name]['weight']);
-    $row[] = check_plain($form['wysiwyg_templates'][$name]['#template']->description);
-    $row[] = check_plain(implode(', ', $form['wysiwyg_templates'][$name]['#template']->content_types));
-    $row[] = l(t('edit'), 'admin/config/content/wysiwyg-templates/' . $name . '/edit');
-    $row[] = l(t('export'), 'admin/config/content/wysiwyg-templates/' . $name . '/export');
-    $row[] = l(t('delete'), 'admin/config/content/wysiwyg-templates/' . $name . '/delete');
+    $row[] = \Drupal\Component\Utility\Html::escape($title);
+    $row[] = \Drupal::service("renderer")->render($form['wysiwyg_templates'][$name]['weight']);
+    $row[] = \Drupal\Component\Utility\Html::escape($form['wysiwyg_templates'][$name]['#template']->description);
+    $row[] = \Drupal\Component\Utility\Html::escape(implode(', ', $form['wysiwyg_templates'][$name]['#template']->content_types));
+    // @FIXME
+// l() expects a Url object, created from a route name or external URI.
+// $row[] = l(t('edit'), 'admin/config/content/wysiwyg-templates/' . $name . '/edit');
+
+    // @FIXME
+// l() expects a Url object, created from a route name or external URI.
+// $row[] = l(t('export'), 'admin/config/content/wysiwyg-templates/' . $name . '/export');
+
+    // @FIXME
+// l() expects a Url object, created from a route name or external URI.
+// $row[] = l(t('delete'), 'admin/config/content/wysiwyg-templates/' . $name . '/delete');
+
 
     $rows[] = array('data' => $row, 'class' => array('draggable'));
   }
 
-  drupal_add_tabledrag('wysiwyg-templates', 'order', 'sibling', 'template-weight');
+  // @FIXME
+// TableDrag is now attached with the #tabledrag property of certain render
+// arrays. drupal_add_tabledrag() is now internal and should never be called directly.
+// 
+// 
+// @see https://www.drupal.org/node/2160571
+// drupal_add_tabledrag('wysiwyg-templates', 'order', 'sibling', 'template-weight');
 
-  $output = '<p>' . t('The Wysiwyg Template module allows you to create templates to be used with a Wysiwyg editor of your choice. The template button for the editor will need to be enabled from the !profiles settings. The currently supported editors are FCK Editor, CK Editor and TinyMCE.', array('!profiles' => l(t('WYSIWYG Profile'), 'admin/config/content/filters'))) . '</p>';
-  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'wysiwyg-templates')));
+
+  // @FIXME
+// l() expects a Url object, created from a route name or external URI.
+// $output = '<p>' . t('The Wysiwyg Template module allows you to create templates to be used with a Wysiwyg editor of your choice. The template button for the editor will need to be enabled from the !profiles settings. The currently supported editors are FCK Editor, CK Editor and TinyMCE.', array('!profiles' => l(t('WYSIWYG Profile'), 'admin/config/content/filters'))) . '</p>';
+
+  // @FIXME
+// theme() has been renamed to _theme() and should NEVER be called directly.
+// Calling _theme() directly can alter the expected output and potentially
+// introduce security issues (see https://www.drupal.org/node/2195739). You
+// should use renderable arrays instead.
+// 
+// 
+// @see https://www.drupal.org/node/2195739
+// $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'wysiwyg-templates')));
+
   $output .= drupal_render_children($form);
 
   return $output;
@@ -182,10 +213,19 @@ function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
   if (isset($form_state['values']['fid']) && $form_state['values']['fid']) {
     $image_uri = file_load($form_state['values']['fid'])->uri;
     if ($image_uri) {
-      $image = theme('image_style', array(
-        'style_name' => 'wysiwyg_template_thumbnail',
-        'path' => $image_uri
-      ));
+      // @FIXME
+// theme() has been renamed to _theme() and should NEVER be called directly.
+// Calling _theme() directly can alter the expected output and potentially
+// introduce security issues (see https://www.drupal.org/node/2195739). You
+// should use renderable arrays instead.
+// 
+// 
+// @see https://www.drupal.org/node/2195739
+// $image = theme('image_style', array(
+//         'style_name' => 'wysiwyg_template_thumbnail',
+//         'path' => $image_uri
+//       ));
+
     }
   }
   $form['template_image'] = array(
@@ -214,13 +254,22 @@ function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
     '#default_value' => isset($form_state['values']['body']) ? $form_state['values']['body'] : '',
     '#required' => true
   );
-  if (module_exists('token')) {
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
     $form['token_help'] = array(
       '#theme' => 'token_tree',
       '#token_types' => array('node', 'custom'),
       '#global_types' => true
     );
-    $form['body']['#title'] = theme('token_help', 'node');
+    // @FIXME
+// theme() has been renamed to _theme() and should NEVER be called directly.
+// Calling _theme() directly can alter the expected output and potentially
+// introduce security issues (see https://www.drupal.org/node/2195739). You
+// should use renderable arrays instead.
+// 
+// 
+// @see https://www.drupal.org/node/2195739
+// $form['body']['#title'] = theme('token_help', 'node');
+
   }
   $form['submit'] = array(
     '#type' => 'submit',
@@ -352,7 +401,14 @@ function wysiwyg_template_export_get_code($template, $indent = '') {
  * Generate a form for exporting a template.
  */
 function wysiwyg_template_export_form($form, &$form_state, $template) {
-  drupal_set_title(check_plain($template['title']));
+  // @FIXME
+// drupal_set_title() has been removed. There are now a few ways to set the title
+// dynamically, depending on the situation.
+// 
+// 
+// @see https://www.drupal.org/node/2067859
+// drupal_set_title(check_plain($template['title']));
+
   $code = wysiwyg_template_export_get_code($template);
   $lines = substr_count($code, "\n") + 1;
   $form['export'] = array(

@@ -1,0 +1,10 @@
+wysiwyg_template.template_form:
+  route_name: wysiwyg_template.template_form
+  title: 'Add Template'
+  appears_on:
+    - wysiwyg_template.template_form
+wysiwyg_template.import_form:
+  route_name: wysiwyg_template.import_form
+  title: 'Import Template'
+  appears_on:
+    - wysiwyg_template.import_form
