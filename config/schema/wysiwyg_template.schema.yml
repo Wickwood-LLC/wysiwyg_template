@@ -1,0 +1,22 @@
+wysiwyg_template.wysiwyg_template.*:
+  type: config_entity
+  label: 'WYSIWYG template'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+      label: 'UUID'
+    description:
+      type: string
+      label: 'Description'
+    body:
+      type: text_format
+      label: 'The WYSIWYG template HTML'
+    weight:
+      type: integer
+      label: 'Weight'

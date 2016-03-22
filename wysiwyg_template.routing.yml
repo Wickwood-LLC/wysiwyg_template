@@ -1,39 +1,3 @@
-wysiwyg_template.overview:
-  path: /admin/config/content/wysiwyg-templates
-  defaults:
-    _title: 'Wysiwyg templates'
-    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateOverview
-  requirements:
-    _permission: 'administer wysiwyg templates'
-wysiwyg_template.template_form:
-  path: '/admin/config/content/wysiwyg-templates/{template}/edit'
-  defaults:
-    template: null
-    _title: 'Edit Template'
-    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateTemplateForm
-  requirements:
-    _permission: 'administer wysiwyg templates'
-wysiwyg_template.import_form:
-  path: /admin/config/content/wysiwyg-templates/import
-  defaults:
-    _title: 'Import Template'
-    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateImportForm
-  requirements:
-    _permission: 'import wysiwyg templates'
-wysiwyg_template.export_form:
-  path: '/admin/config/content/wysiwyg-templates/{template}/export'
-  defaults:
-    _title: 'Export Template'
-    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateExportForm
-  requirements:
-    _permission: 'administer wysiwyg templates'
-wysiwyg_template.delete_confirm:
-  path: '/admin/config/content/wysiwyg-templates/{template}/delete'
-  defaults:
-    _title: 'Delete Template'
-    _form: \Drupal\wysiwyg_template\Form\WysiwygTemplateDeleteConfirm
-  requirements:
-    _permission: 'administer wysiwyg templates'
 wysiwyg_template.list_js:
   path: '/wysiwyg-templates/{editorName}/{contentType}/list'
   defaults:
@@ -46,3 +10,36 @@ wysiwyg_template.html_print:
     _controller: '\Drupal\wysiwyg_template\Controller\DefaultController::wysiwyg_template_html_print'
   requirements:
     _permission: 'access content'
+
+# Template routing definition
+entity.wysiwyg_template.collection:
+  path: '/admin/config/content/wysiwyg-templates'
+  defaults:
+    _entity_list: 'wysiwyg_template'
+    _title: 'WYSIWYG templates'
+  requirements:
+    _permission: 'administer wysiwyg templates'
+
+entity.wysiwyg_template.add_form:
+  path: '/admin/config/content/wysiwyg-templates/add'
+  defaults:
+    _entity_form: 'wysiwyg_template.add'
+    _title: 'Add template'
+  requirements:
+    _permission: 'administer wysiwyg templates'
+
+entity.wysiwyg_template.edit_form:
+  path: '/admin/config/content/wysiwyg-templates/{wysiwyg_template}'
+  defaults:
+    _entity_form: 'wysiwyg_template.edit'
+    _title: 'Edit template'
+  requirements:
+    _permission: 'administer wysiwyg templates'
+
+entity.wysiwyg_template.delete_form:
+  path: '/admin/config/content/wysiwyg-templates/{wysiwyg_template}/delete'
+  defaults:
+    _entity_form: 'wysiwyg_template.delete'
+    _title: 'Delete template'
+  requirements:
+    _permission: 'administer wysiwyg templates'
