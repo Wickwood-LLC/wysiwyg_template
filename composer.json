@@ -1,0 +1,20 @@
+{
+  "name": "drupal/wysiwyg_template",
+  "description": "Manage templates for use in a WYSIWYG.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "support": {
+    "issues": "https://drupal.org/project/issues/wysiwyg_template",
+    "source": "https://drupal.org/project/wysiwyg_template"
+  },
+  "keywords": [
+    "Drupal",
+    "WYSIWYG",
+    "Templates"
+  ],
+  "autoload": {
+    "psr-4": {
+        "Drupal\\wysiwyg_template\\": "src/"
+    }
+  }
+}
