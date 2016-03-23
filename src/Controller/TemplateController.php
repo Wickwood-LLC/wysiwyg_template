@@ -54,17 +54,5 @@ EOL;
     $response->headers->set('Content-Type', 'text/javascript');
     return $response;
   }
-
-  public function wysiwyg_template_html_print($body, $editorName) {
-    //don't cache templates
-    drupal_add_http_header('CacheControl', 'no-cache');
-    drupal_add_http_header('Expires', '-1');
-    drupal_add_http_header('Content-Type', 'text/javascript; charset=UTF-8');
-    switch ($editorName) {
-      case 'tinymce':
-        print $body;
-        break;
-    }
-  }
-
+  
 }

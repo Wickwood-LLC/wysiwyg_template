@@ -16,12 +16,6 @@ wysiwyg_template.list_js.type:
     parameters:
       node_type:
         with_config_overrides: TRUE
-wysiwyg_template.html_print:
-  path: '/wysiwyg-templates/{editorName}/load/{body}'
-  defaults:
-    _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::wysiwyg_template_html_print'
-  requirements:
-    _permission: 'access content'
 
 # Template routing definition
 entity.wysiwyg_template.collection:
