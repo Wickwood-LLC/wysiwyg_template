@@ -8,6 +8,7 @@
 namespace Drupal\wysiwyg_template\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\wysiwyg_template\TemplateInterface;
 
 /**
@@ -78,6 +79,13 @@ class Template extends ConfigEntityBase implements TemplateInterface {
   protected $weight;
 
   /**
+   * The node types this template is available for.
+   *
+   * @var string[]
+   */
+  protected $node_types;
+
+  /**
    * {@inheritdoc}
    */
   public function getDescription() {
@@ -107,6 +115,31 @@ class Template extends ConfigEntityBase implements TemplateInterface {
    */
   public function getWeight() {
     return $this->weight;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getNodeTypes() {
+    return $this->node_types ?: [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save() {
+    $this->node_types = array_values(array_filter($this->node_types));
+    parent::save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postLoad(EntityStorageInterface $storage, array &$entities) {
+    parent::postLoad($storage, $entities);
+    // Sort the queried roles by their weight.
+    // See \Drupal\Core\Config\Entity\ConfigEntityBase::sort().
+    uasort($entities, 'static::sort');
   }
 
 }

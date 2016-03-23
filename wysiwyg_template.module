@@ -1,0 +1,24 @@
+<?php
+/**
+ * @file
+ * Contains hook implementations for the WYSIWYG template module.
+ */
+
+/**
+ * Implements hook_editor_js_settings_alter().
+ */
+function wysiwyg_template_editor_js_settings_alter(array &$settings) {
+
+  // Change url to be node-type-specific if editing a node.
+  $route_match = \Drupal::routeMatch();
+  if ($route_match->getRouteName() == 'entity.node.edit_form') {
+    $node = $route_match->getParameter('node');
+    foreach ($settings['editor']['formats'] as $format => $config) {
+      if (isset($config['editorSettings']['templates_files'])) {
+        $url = \Drupal\Core\Url::fromRoute('wysiwyg_template.list_js.type', ['node_type' => $node->getType()]);
+        $settings['editor']['formats'][$format]['editorSettings']['templates_files'] = [$url->toString()];
+      }
+    }
+  }
+
+}

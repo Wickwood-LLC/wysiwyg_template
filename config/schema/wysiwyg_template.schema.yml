@@ -20,3 +20,8 @@ wysiwyg_template.wysiwyg_template.*:
     weight:
       type: integer
       label: 'Weight'
+    node_types:
+      type: sequence
+      label: 'Available content types'
+      sequence:
+        type: string

@@ -33,8 +33,7 @@ class TemplateController extends ControllerBase {
       // @todo Support images.
       'imagesPath' => FALSE,
     ];
-    /** @var \Drupal\wysiwyg_template\TemplateInterface $template */
-    foreach (Template::loadMultiple() as $template) {
+    foreach ($this->filterByNodeType(Template::loadMultiple(), $node_type) as $template) {
       $json_template = new \stdClass();
       $json_template->title = $template->label();
       // @todo Images.
@@ -54,6 +53,35 @@ EOL;
     $response = new Response($script);
     $response->headers->set('Content-Type', 'text/javascript');
     return $response;
+  }
+
+  /**
+   * Helper method to filter out templates by node type.
+   *
+   * @param \Drupal\wysiwyg_template\TemplateInterface[] $templates
+   * @param \Drupal\node\NodeTypeInterface $node_type
+   *
+   * @return \Drupal\wysiwyg_template\TemplateInterface[]
+   */
+  protected function filterByNodeType(array $templates, NodeTypeInterface $node_type = NULL) {
+    foreach ($templates as $id => $template) {
+      if (!$node_type) {
+        // If no node type is passed than all templates that *don't specify any*
+        // types are included, but those specifying a type are not.
+        if (!empty($template->getNodeTypes())) {
+          unset($templates[$id]);
+        }
+      }
+      else {
+        // Any templates without types, plus the templates that specify this type.
+        if (empty($template->getNodeTypes()) || in_array($node_type->id(), $template->getNodeTypes())) {
+          continue;
+        }
+        unset($templates[$id]);
+      }
+    }
+
+    return $templates;
   }
 
 }

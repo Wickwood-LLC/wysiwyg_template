@@ -7,6 +7,7 @@
 namespace Drupal\wysiwyg_template\Tests\Form;
 
 use Drupal\Core\Url;
+use Drupal\node\Entity\NodeType;
 use Drupal\simpletest\WebTestBase;
 use Drupal\wysiwyg_template\Entity\Template;
 
@@ -27,7 +28,7 @@ class CrudTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['wysiwyg_template', 'filter_test'];
+  public static $modules = ['wysiwyg_template', 'filter_test', 'node'];
 
   /**
    * {@inheritdoc}
@@ -48,6 +49,8 @@ class CrudTest extends WebTestBase {
     $this->drupalGet(Url::fromRoute('entity.wysiwyg_template.collection'));
     $this->assertText(t('There are no WYSIWYG templates yet.'));
     $this->drupalGet(Url::fromRoute('entity.wysiwyg_template.add_form'));
+    // Node type selection should be hidden if there are less than 2 types.
+    $this->assertNoText(t('Available for content types'));
     $id = strtolower($this->randomMachineName());
     $edit = [
       'id' => $id,
@@ -77,6 +80,32 @@ class CrudTest extends WebTestBase {
     $this->drupalGet($template->toUrl('delete-form'));
     $this->drupalPostForm(NULL, [], t('Delete'));
     $this->assertText(t('There are no WYSIWYG templates yet.'));
+
+    // Add a few node types.
+    $type1 = NodeType::create([
+      'type' => $this->randomMachineName(),
+      'label' => $this->randomString(),
+    ]);
+    $type1->save();
+    $type2 = NodeType::create([
+      'type' => $this->randomMachineName(),
+      'name' => $this->randomString(),
+    ]);
+    $type2->save();
+    $this->drupalGet(Url::fromRoute('entity.wysiwyg_template.add_form'));
+    // Node type selection should be hidden if there are less than 2 types.
+    $this->assertText(t('Available for content types'));
+    $id = strtolower($this->randomMachineName());
+    $edit = [
+      'id' => $id,
+      'label' => $this->randomString(),
+      'description' => $this->randomString(),
+      'body[value]' => $this->randomString(),
+      'node_types[' . $type2->id() . ']' => 1,
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $template = Template::load($id);
+    $this->assertEqual([$type2->id()], $template->getNodeTypes());
   }
 
 }

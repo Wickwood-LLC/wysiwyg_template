@@ -9,6 +9,7 @@ namespace Drupal\wysiwyg_template\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\NodeType;
 
 /**
  * Class TemplateForm.
@@ -57,6 +58,19 @@ class TemplateForm extends EntityForm {
       '#title' => $this->t('HTML template'),
       '#rows' => 10,
       '#required' => TRUE,
+    ];
+
+    $node_types = array_map(function ($item) {
+      return $item->label();
+    }, NodeType::loadMultiple());
+
+    $form['node_types'] = [
+      '#type' => 'checkboxes',
+      '#default_value' => $wysiwyg_template->getNodeTypes(),
+      '#title' => $this->t('Available for content types'),
+      '#description' => $this->t('If you select no content type, this template will be available for all content types.'),
+      '#access' => (bool) count($node_types),
+      '#options' => $node_types,
     ];
 
     return $form;

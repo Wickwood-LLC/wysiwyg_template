@@ -46,4 +46,11 @@ interface TemplateInterface extends ConfigEntityInterface {
    */
   public function getWeight();
 
+  /**
+   * Gets the list of allowed node types.
+   *
+   * @return string[]
+   */
+  public function getNodeTypes();
+
 }
