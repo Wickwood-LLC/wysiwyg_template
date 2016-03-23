@@ -7,6 +7,7 @@
 namespace Drupal\wysiwyg_template\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginBase;
+use Drupal\Core\Url;
 use Drupal\editor\Entity\Editor;
 
 /**
@@ -43,8 +44,12 @@ class TemplateSelector extends CKEditorPluginBase {
    * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
-    // TODO: Implement getConfig() method.
-    return [];
+    return [
+      // @todo Implement per-content-type listings.
+      // @see https://www.drupal.org/node/2693221
+      'templates_files' => [Url::fromRoute('wysiwyg_template.list_js')->toString()],
+      'templates_replaceContent' => FALSE,
+    ];
   }
 
   /**

@@ -1,13 +1,25 @@
 wysiwyg_template.list_js:
-  path: '/wysiwyg-templates/{editorName}/{contentType}/list'
+  path: '/wysiwyg-templates/js'
   defaults:
-    _controller: '\Drupal\wysiwyg_template\Controller\DefaultController::wysiwyg_template_list_js'
+    _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::listJson'
   requirements:
     _permission: 'access content'
+# @todo Implement per-content-type listings.
+# @see https://www.drupal.org/node/2693221
+wysiwyg_template.list_js.type:
+  path: '/wysiwyg-templates/js/{node_type}'
+  defaults:
+    _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::listJson'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      node_type:
+        with_config_overrides: TRUE
 wysiwyg_template.html_print:
   path: '/wysiwyg-templates/{editorName}/load/{body}'
   defaults:
-    _controller: '\Drupal\wysiwyg_template\Controller\DefaultController::wysiwyg_template_html_print'
+    _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::wysiwyg_template_html_print'
   requirements:
     _permission: 'access content'
 

@@ -14,6 +14,11 @@
     icons: 'templateselector,templateselector-rtl',
     hidpi: true,
 
+    beforeInit: function (editor) {
+
+
+    },
+
     init: function (editor) {
       // Register the toolbar button.
       if (editor.ui.addButton) {
@@ -22,12 +27,12 @@
           command: 'templates'
         });
       }
-
-      // Specify path to templates.
-      CKEDITOR.config.templates_files = [
-        CKEDITOR.getUrl('/wysiwyg-templates/js')
-      ];
     }
   });
 
 })(jQuery, Drupal, CKEDITOR);
+
+// Specify path to templates.
+CKEDITOR.config.templates_files = [
+  CKEDITOR.getUrl('/wysiwyg-templates/js')
+];
