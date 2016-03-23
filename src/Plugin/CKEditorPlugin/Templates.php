@@ -25,28 +25,28 @@ use Drupal\editor\Entity\Editor;
 class Templates extends PluginBase implements CKEditorPluginInterface {
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function isInternal() {
     return FALSE;
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getDependencies(Editor $editor) {
     return [];
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getLibraries(Editor $editor) {
     return [];
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getFile() {
     // @todo This location is hard-coded and should be more flexible.
@@ -55,9 +55,10 @@ class Templates extends PluginBase implements CKEditorPluginInterface {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
     return [];
   }
+
 }

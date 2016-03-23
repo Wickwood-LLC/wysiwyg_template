@@ -7,7 +7,6 @@
 
 namespace Drupal\wysiwyg_template\Form;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -59,8 +58,6 @@ class TemplateForm extends EntityForm {
       '#rows' => 10,
       '#required' => TRUE,
     ];
-
-
 
     return $form;
   }

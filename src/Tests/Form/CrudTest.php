@@ -7,7 +7,6 @@
 namespace Drupal\wysiwyg_template\Tests\Form;
 
 use Drupal\Core\Url;
-use Drupal\filter\Entity\FilterFormat;
 use Drupal\simpletest\WebTestBase;
 use Drupal\wysiwyg_template\Entity\Template;
 
@@ -19,7 +18,7 @@ use Drupal\wysiwyg_template\Entity\Template;
 class CrudTest extends WebTestBase {
 
   /**
-   * Admin user
+   * Admin user.
    *
    * @var \Drupal\user\UserInterface
    */

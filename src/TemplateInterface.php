@@ -41,7 +41,7 @@ interface TemplateInterface extends ConfigEntityInterface {
   /**
    * Gets the template weight.
    *
-   * @return integer
+   * @return int
    *   The template weight.
    */
   public function getWeight();

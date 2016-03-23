@@ -1,4 +1,5 @@
-<?php /**
+<?php
+/**
  * @file
  * Contains \Drupal\wysiwyg_template\Controller\TemplateController.
  */
@@ -54,5 +55,5 @@ EOL;
     $response->headers->set('Content-Type', 'text/javascript');
     return $response;
   }
-  
+
 }

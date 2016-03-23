@@ -1,6 +1,6 @@
 /**
  * @file
- * Drupal WYSIWYG template selector
+ * Drupal WYSIWYG template selector.
  *
  * @ignore
  */
@@ -15,7 +15,6 @@
     hidpi: true,
 
     beforeInit: function (editor) {
-
 
     },
 
