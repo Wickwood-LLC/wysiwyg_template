@@ -8,18 +8,27 @@
 namespace Drupal\wysiwyg_template;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
+use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a listing of Template entities.
  */
-class TemplateListBuilder extends ConfigEntityListBuilder {
+class TemplateListBuilder extends DraggableListBuilder {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'wysiwyg_template_list_form';
+  }
+
   /**
    * {@inheritdoc}
    */
   public function buildHeader() {
     $header['label'] = $this->t('Template');
-    $header['id'] = $this->t('Machine name');
     return $header + parent::buildHeader();
   }
 
@@ -28,21 +37,19 @@ class TemplateListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $entity->label();
-    $row['id'] = $entity->id();
-
     return $row + parent::buildRow($entity);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function render() {
-    $build = parent::render();
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildForm($form, $form_state);
 
     // Better empty text.
-    $build['table']['#empty'] = $this->t('There are no WYSIWYG templates yet.');
+    $form[$this->entitiesKey]['#empty'] = $this->t('There are no WYSIWYG templates yet.');
 
-    return $build;
+    return $form;
   }
 
 }

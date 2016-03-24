@@ -29,7 +29,8 @@ use Drupal\wysiwyg_template\TemplateInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "weight" = "weight"
  *   },
  *   links = {
  *     "canonical" = "/admin/config/content/wysiwyg-templates/{wysiwyg_template}",
