@@ -8,6 +8,7 @@
 namespace Drupal\wysiwyg_template;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\node\NodeTypeInterface;
 
 /**
  * Provides an interface for defining Template entities.
@@ -52,5 +53,16 @@ interface TemplateInterface extends ConfigEntityInterface {
    * @return string[]
    */
   public function getNodeTypes();
+
+  /**
+   * Loads templates filtered by node type.
+   *
+   * @param \Drupal\node\NodeTypeInterface $node_type
+   *   (optional) The node type to filter by. If this is not passed, only
+   *   templates that specify *no* types will be returned.
+   * @return \Drupal\wysiwyg_template\TemplateInterface[]
+   *   The list of available templates filtered by node type.
+   */
+  public static function loadByNodeType(NodeTypeInterface $node_type = NULL);
 
 }

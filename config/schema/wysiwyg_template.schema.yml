@@ -25,3 +25,11 @@ wysiwyg_template.wysiwyg_template.*:
       label: 'Available content types'
       sequence:
         type: string
+
+node.type.*.third_party.wysiwyg_template:
+  type: mapping
+  label: 'Per content-type WYISIWYG template settings'
+  mapping:
+    default_template:
+      label: 'Template to use for populating new content of this type'
+      type: string

@@ -9,6 +9,7 @@ namespace Drupal\wysiwyg_template\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\node\NodeTypeInterface;
 use Drupal\wysiwyg_template\TemplateInterface;
 
 /**
@@ -128,7 +129,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
    * {@inheritdoc}
    */
   public function save() {
-    $this->node_types = array_values(array_filter($this->node_types));
+    $this->node_types = array_values(array_filter($this->getNodeTypes()));
     parent::save();
   }
 
@@ -140,6 +141,32 @@ class Template extends ConfigEntityBase implements TemplateInterface {
     // Sort the queried roles by their weight.
     // See \Drupal\Core\Config\Entity\ConfigEntityBase::sort().
     uasort($entities, 'static::sort');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function loadByNodeType(NodeTypeInterface $node_type = NULL) {
+    /** @var \Drupal\wysiwyg_template\TemplateInterface[] $templates */
+    $templates = static::loadMultiple();
+    foreach ($templates as $id => $template) {
+      if (!$node_type) {
+        // If no node type is passed than all templates that *don't specify any*
+        // types are included, but those specifying a type are not.
+        if (!empty($template->getNodeTypes())) {
+          unset($templates[$id]);
+        }
+      }
+      else {
+        // Any templates without types, plus the templates that specify this type.
+        if (empty($template->getNodeTypes()) || in_array($node_type->id(), $template->getNodeTypes())) {
+          continue;
+        }
+        unset($templates[$id]);
+      }
+    }
+
+    return $templates;
   }
 
 }
