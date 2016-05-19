@@ -220,7 +220,6 @@ function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
       '#token_types' => array('node', 'custom'),
       '#global_types' => true
     );
-    $form['body']['#title'] = theme('token_help', 'node');
   }
   $form['submit'] = array(
     '#type' => 'submit',
