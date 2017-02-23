@@ -222,6 +222,22 @@ function wysiwyg_template_template_form($form, $form_state, $template = NULL) {
     );
     $form['body']['#title'] = theme('token_help', 'node');
   }
+  $form['editor_style'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Editor CSS Styles'),
+    '#rows' => 10,
+    '#default_value' => isset($form_state['values']['editor_style']) ? $form_state['values']['editor_style'] : '',
+    '#required' => FALSE,
+    '#description' => t('Add CSS style rules to style your template in editor.'),
+  );
+  $form['view_style'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Content View CSS Styles'),
+    '#rows' => 10,
+    '#default_value' => isset($form_state['values']['view_style']) ? $form_state['values']['view_style'] : '',
+    '#required' => FALSE,
+    '#description' => t('Add CSS style rules to style your template in content view.'),
+  );
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save')
@@ -298,6 +314,14 @@ function wysiwyg_template_template_form_submit($form, &$form_state) {
   $template = $form_state['values'];
   $template['body'] = $form_state['values']['body']['value'];
   $template['format'] = $form_state['values']['body']['format'];
+  $editor_css_file = "public://wysiwyg_template/css/{$template['name']}-editor.css";
+  if (file_exists($editor_css_file)) {
+      drupal_unlink($editor_css_file);
+  }
+  $view_css_file = "public://wysiwyg_template/css/{$template['name']}-view.css";
+  if (file_exists($view_css_file)) {
+      drupal_unlink($view_css_file);
+  }
   if (wysiwyg_template_save_template($template)) {
     drupal_set_message(t('The template has been saved.'));
   }

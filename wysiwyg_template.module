@@ -221,6 +221,19 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
 
 function wysiwyg_template_ckeditor_settings_alter(&$settings) {
   $settings['templates_files'] = array(_wysiwyg_template_get_list_url('ckeditor'));
+  $templates = wysiwyg_template_load_all();
+  foreach ($templates as $template) {
+    if (!empty($template['editor_style'])) {
+      $css_file = "public://wysiwyg_template/css/{$template['name']}-editor.css";
+      if (!file_exists($css_file)) {
+        if (!file(dirname($css_file))) {
+          drupal_mkdir(dirname($css_file), NULL, TRUE);
+        }
+        file_put_contents ($css_file, $template['editor_style']);
+      }
+      $settings['contentsCss'][] = file_create_url($css_file);
+    }
+  }
 }
 
 /**
@@ -326,6 +339,8 @@ function wysiwyg_template_load_template($name) {
       'weight' => $template->weight,
       'fid' => $template->fid,
       'body' => $template->body,
+      'editor_style' => $template->editor_style,
+      'view_style' => $template->view_style,
       'format' => $template->format,
       'name' => $name,
       'content_types' => wysiwyg_template_load_template_content_types($name),
@@ -395,6 +410,8 @@ function wysiwyg_template_load_all($contentType = '_', $forSelect = FALSE, $incl
       'weight' => $dbTemplate->weight,
       'image' => $image_uri,
       'body' => token_replace($dbTemplate->body),
+      'editor_style' => $dbTemplate->editor_style,
+      'view_style' => $dbTemplate->view_style,
       'format' => $dbTemplate->format,
       'name' => $dbTemplate->name,
     );
@@ -424,6 +441,8 @@ function wysiwyg_template_save_template($template) {
     'weight' => (isset($template['weight']) ? $template['weight'] : 0),
     'fid' => $template['fid'],
     'body' => $template['body'],
+    'editor_style' => $template['editor_style'],
+    'view_style' => $template['view_style'],
     // Avoid PHP Notice when importing templates without format.
     'format' => isset($template['format']) ? $template['format'] : filter_fallback_format(),
   );
@@ -568,4 +587,44 @@ function _wysiwyg_template_set_node_type($type = NULL) {
   }
 
   return isset($content_type) ? $content_type : '_';
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function wysiwyg_template_page_build(&$page) {
+  $templates = wysiwyg_template_load_all();
+  foreach ($templates as $template) {
+    if (!empty($template['view_style'])) {
+      $css_file = "public://wysiwyg_template/css/{$template['name']}-view.css";
+      if (!file_exists($css_file)) {
+        if (!file(dirname($css_file))) {
+          drupal_mkdir(dirname($css_file), NULL, TRUE);
+        }
+        file_put_contents ($css_file, $template['view_style']);
+      }
+      $page['page_bottom']['wysiwyg_template']['#attached']['css'][$css_file] = array(
+        'every_page' => TRUE,
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_flush_caches()
+ */
+function wysiwyg_template_flush_caches () {
+  // Delete all CSS files for templates when caches are cleared.
+  $result = db_query("SELECT wt.name FROM {wysiwyg_templates} wt ");
+  foreach ($result as $record) {
+    $editor_css_file = "public://wysiwyg_template/css/{$record->name}-editor.css";
+    if (file_exists($editor_css_file)) {
+        drupal_unlink($editor_css_file);
+    }
+    $view_css_file = "public://wysiwyg_template/css/{$record->name}-view.css";
+    if (file_exists($view_css_file)) {
+        drupal_unlink($view_css_file);
+    }
+  }
+  return array();
 }
