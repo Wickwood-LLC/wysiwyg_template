@@ -84,6 +84,23 @@ function wysiwyg_template_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
+
+  $items['admin/config/content/wysiwyg-templates/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items['admin/config/content/wysiwyg-templates/setting'] = array(
+    'title' => 'Settings',
+    'description' => 'Settings for Wysiwyg templates',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wysiwyg_template_settings_form'),
+    'access arguments' => array('administer wysiwyg templates'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'wysiwyg_template.admin.inc',
+    'weight' => 10,
+  );
   return $items;
 }
 
@@ -221,6 +238,18 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
 
 function wysiwyg_template_ckeditor_settings_alter(&$settings) {
   $settings['templates_files'] = array(_wysiwyg_template_get_list_url('ckeditor'));
+  // Create CSS file for styling template in editor and load on CKEditor.
+  $editor_css = variable_get('wysiwyg_template_editor_styles', NULL);
+  if (!empty($editor_css)) {
+    $css_file = "public://wysiwyg_template/css/editor.css";
+    if (!file_exists($css_file)) {
+      if (!file_exists(dirname($css_file))) {
+        drupal_mkdir(dirname($css_file), NULL, TRUE);
+      }
+      file_put_contents ($css_file, $editor_css);
+    }
+    $settings['contentsCss'][] = file_create_url($css_file);
+  }
 }
 
 /**
@@ -568,4 +597,39 @@ function _wysiwyg_template_set_node_type($type = NULL) {
   }
 
   return isset($content_type) ? $content_type : '_';
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function wysiwyg_template_page_build(&$page) {
+  // Create CSS style file for the styles for content view and load on all pages.
+  $content_css = variable_get('wysiwyg_template_content_view_styles', NULL);
+  if (!empty($content_css)) {
+    $css_file = "public://wysiwyg_template/css/view.css";
+    if (!file_exists($css_file)) {
+      if (!file_exists(dirname($css_file))) {
+        drupal_mkdir(dirname($css_file), NULL, TRUE);
+      }
+      file_put_contents ($css_file, $content_css);
+    }
+    $page['page_bottom']['wysiwyg_template']['#attached']['css'][$css_file] = array(
+      'every_page' => TRUE,
+    );
+  }
+}
+
+/**
+ * Implements hook_flush_caches()
+ */
+function wysiwyg_template_flush_caches () {
+  $editor_css_file = "public://wysiwyg_template/css/editor.css";
+  if (file_exists($editor_css_file)) {
+      drupal_unlink($editor_css_file);
+  }
+  $view_css_file = "public://wysiwyg_template/css/view.css";
+  if (file_exists($view_css_file)) {
+      drupal_unlink($view_css_file);
+  }
+  return array();
 }

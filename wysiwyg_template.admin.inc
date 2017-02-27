@@ -410,3 +410,36 @@ function wysiwyg_template_import_from_code($code) {
     wysiwyg_template_save_template($template);
   }
 }
+
+function wysiwyg_template_settings_form() {
+  $form = array();
+  $form['wysiwyg_template_editor_styles'] = array(
+    '#type' => 'textarea',
+    '#title' => t('CSS Styles for Editor'),
+    '#default_value' => variable_get('wysiwyg_template_editor_styles', NULL),
+    '#description' => t('CSS styles to be used to style the wysiwyg templates on editor'),
+  );
+  $form['wysiwyg_template_content_view_styles'] = array(
+    '#type' => 'textarea',
+    '#title' => t('CSS Styles for Content View'),
+    '#default_value' => variable_get('wysiwyg_template_content_view_styles', NULL),
+    '#description' => t('CSS styles to be used to style the wysiwyg templates on node view'),
+  );
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'wysiwyg_template_settings_form_submit';
+  return $form;
+}
+
+/**
+ * Delete generated CSS files when styles changed.
+ */
+function wysiwyg_template_settings_form_submit($form, $form_state) {
+  $view_css_file = "public://wysiwyg_template/css/view.css";
+  if (file_exists($view_css_file)) {
+    drupal_unlink($view_css_file);
+  }
+  $editor_css_file = "public://wysiwyg_template/css/editor.css";
+  if (file_exists($editor_css_file)) {
+    drupal_unlink($editor_css_file);
+  }
+}
