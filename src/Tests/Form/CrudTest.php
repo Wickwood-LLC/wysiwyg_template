@@ -63,7 +63,7 @@ class CrudTest extends WebTestBase {
     $this->assertEscaped($id, 'The machine name appears on the listing page.');
     $this->assertEscaped($edit['label'], 'The label appears on the listing page.');
 
-    /** @var \Drupal\wysiwyg_template\TemplateInterface $template */
+    /** @var \Drupal\wysiwyg_template_core\TemplateInterface $template */
     $template = Template::load($id);
     $this->assertEqual('filter_test', $template->getFormat());
 

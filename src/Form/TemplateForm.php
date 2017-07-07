@@ -24,7 +24,7 @@ class TemplateForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /** @var \Drupal\wysiwyg_template\TemplateInterface $wysiwyg_template */
+    /** @var \Drupal\wysiwyg_template_core\TemplateInterface $wysiwyg_template */
     $wysiwyg_template = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -80,7 +80,7 @@ class TemplateForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\wysiwyg_template\TemplateInterface $wysiwyg_template */
+    /** @var \Drupal\wysiwyg_template_core\TemplateInterface $wysiwyg_template */
     $wysiwyg_template = $this->entity;
     $status = $wysiwyg_template->save();
 

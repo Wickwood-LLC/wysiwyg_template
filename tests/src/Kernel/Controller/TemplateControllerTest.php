@@ -42,7 +42,7 @@ class TemplateControllerTest extends KernelTestBase {
   /**
    * Templates.
    *
-   * @var \Drupal\wysiwyg_template\TemplateInterface[]
+   * @var \Drupal\wysiwyg_template_core\TemplateInterface[]
    */
   protected $templates;
 

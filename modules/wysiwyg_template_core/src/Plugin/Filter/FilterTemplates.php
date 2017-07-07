@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \Drupal\wysiwyg_template\Plugin\Filter\FilterTemplates.php
+ * Contains \Drupal\wysiwyg_template_core\Plugin\Filter\FilterTemplates.php
  */
 
-namespace Drupal\wysiwyg_template\Plugin\Filter;
+namespace Drupal\wysiwyg_template_core\Plugin\Filter;
 
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;

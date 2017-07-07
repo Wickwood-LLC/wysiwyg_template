@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \Drupal\Tests\wysiwyg_template\Kernel\Plugin\Filter\FilterTemplatesTest.
+ * Contains \Drupal\Tests\wysiwyg_template_core\Kernel\Plugin\Filter\FilterTemplatesTest.
  */
 
-namespace Drupal\Tests\wysiwyg_template\Kernel\Plugin\Filter;
+namespace Drupal\Tests\wysiwyg_template_core\Kernel\Plugin\Filter;
 
 use Drupal\filter\FilterPluginCollection;
 use Drupal\KernelTests\KernelTestBase;
@@ -14,14 +14,14 @@ use Drupal\KernelTests\KernelTestBase;
  *
  * @group wysiwyg_template
  *
- * @coversDefaultClass \Drupal\wysiwyg_template\Plugin\Filter\FilterTemplates
+ * @coversDefaultClass \Drupal\wysiwyg_template_core\Plugin\Filter\FilterTemplates
  */
 class FilterTemplatesTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['filter', 'wysiwyg_template'];
+  public static $modules = ['filter', 'wysiwyg_template_core'];
 
   /**
    * The WYSIWYG filter to test.

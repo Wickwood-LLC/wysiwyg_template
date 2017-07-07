@@ -2,18 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\wysiwyg_template\TemplateInterface.
+ * Contains \Drupal\wysiwyg_template_core\TemplateInterface.
  */
 
-namespace Drupal\wysiwyg_template;
+namespace Drupal\wysiwyg_template_core;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\node\NodeTypeInterface;
 
 /**
  * Provides an interface for defining Template entities.
  */
-interface TemplateInterface extends ConfigEntityInterface {
+interface TemplateInterface  {
 
   /**
    * Gets the template description.
@@ -60,6 +59,7 @@ interface TemplateInterface extends ConfigEntityInterface {
    * @param \Drupal\node\NodeTypeInterface $node_type
    *   (optional) The node type to filter by. If this is not passed, only
    *   templates that specify *no* types will be returned.
+   *
    * @return \Drupal\wysiwyg_template\TemplateInterface[]
    *   The list of available templates filtered by node type.
    */

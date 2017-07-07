@@ -10,7 +10,7 @@ namespace Drupal\wysiwyg_template\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\node\NodeTypeInterface;
-use Drupal\wysiwyg_template\TemplateInterface;
+use Drupal\wysiwyg_template_core\TemplateInterface;
 
 /**
  * Defines the Template entity.
@@ -147,7 +147,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
    * {@inheritdoc}
    */
   public static function loadByNodeType(NodeTypeInterface $node_type = NULL) {
-    /** @var \Drupal\wysiwyg_template\TemplateInterface[] $templates */
+    /** @var \Drupal\wysiwyg_template_core\TemplateInterface[] $templates */
     $templates = static::loadMultiple();
     foreach ($templates as $id => $template) {
       if (!$node_type) {

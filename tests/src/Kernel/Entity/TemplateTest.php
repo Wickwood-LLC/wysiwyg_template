@@ -77,7 +77,7 @@ class TemplateTest extends KernelTestBase {
     $template = Template::create($values);
     $template->save();
 
-    /** @var \Drupal\wysiwyg_template\TemplateInterface $template */
+    /** @var \Drupal\wysiwyg_template_core\TemplateInterface $template */
     $template = Template::load($values['id']);
     $this->assertEquals($values['id'], $template->id());
     $this->assertEquals($values['label'], $template->label());

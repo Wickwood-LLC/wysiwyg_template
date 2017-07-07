@@ -25,7 +25,7 @@ class DefaultContentTest extends WebTestBase {
   /**
    * An array of templates.
    *
-   * @var \Drupal\wysiwyg_template\TemplateInterface[]
+   * @var \Drupal\wysiwyg_template_core\TemplateInterface[]
    */
   protected $templates;
 
