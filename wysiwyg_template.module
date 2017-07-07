@@ -15,13 +15,21 @@ use Drupal\wysiwyg_template\Entity\Template;
  */
 function wysiwyg_template_editor_js_settings_alter(array &$settings) {
 
-  // Change url to be node-type-specific if editing a node.
+  // Change url to be node-type-specific if creating or editing a node.
   $route_match = \Drupal::routeMatch();
+  $node_type = NULL;
+
   if ($route_match->getRouteName() == 'entity.node.edit_form') {
-    $node = $route_match->getParameter('node');
+    $node_type = $route_match->getParameter('node')->getType();
+  }
+  else if ($route_match->getRouteName() == 'node.add') {
+    $node_type = $route_match->getParameter('node_type')->get('type');
+  }
+
+  if (!is_null($node_type)) {
     foreach ($settings['editor']['formats'] as $format => $config) {
       if (isset($config['editorSettings']['templates_files'])) {
-        $url = Url::fromRoute('wysiwyg_template.list_js.type', ['node_type' => $node->getType()]);
+        $url = Url::fromRoute('wysiwyg_template.list_js.type', ['node_type' => $node_type]);
         $settings['editor']['formats'][$format]['editorSettings']['templates_files'] = [$url->toString()];
       }
     }
