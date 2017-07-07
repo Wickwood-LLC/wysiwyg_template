@@ -5,9 +5,12 @@ FCK Editor, which allow a user to select an HTML template from a drop-down and
 insert it into the WYSIWYG text-area.
 
 For a full description visit the project page:
-  http://drupal.org/project/wysiwyg_template
+
+- http://drupal.org/project/wysiwyg_template
+
 Bug reports, feature suggestions and latest developments:
-  http://drupal.org/project/issues/wysiwyg_template
+
+- http://drupal.org/project/issues/wysiwyg_template
 
 
 ## REQUIREMENTS
@@ -16,6 +19,31 @@ Bug reports, feature suggestions and latest developments:
 
 **Note** if using composer to manage dependencies, this library will be installed for you. Otherwise place the library at `/libraries/templates` manually or using *drush make*.
 
+For composer to be able to find the library, you have to add this section into your root composer.json file before installing the module:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "ckeditor/templates",
+                "type": "drupal-library",
+                "version": "4.5.7",
+                "dist": {
+                    "type": "zip",
+                    "url": "http://download.ckeditor.com/templates/releases/templates_4.5.7.zip",
+                    "reference": "master"
+                }
+            }
+        }
+    ]
+}
+```
 
 ## INSTALLATION
 
