@@ -17,10 +17,10 @@
             "type": "package",
             "package": {
                 "name": "ckeditor/templates",
-                "version": "4.5.7",
+                "version": "4.11.1",
                 "type": "drupal-library",
                 "dist": {
-                    "url": "https://download.ckeditor.com/templates/releases/templates_4.5.7.zip",
+                    "url": "https://download.ckeditor.com/templates/releases/templates_4.11.1.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -30,7 +30,7 @@
         }
     ],
     "require": {
-        "ckeditor/templates": "4.5.7"
+        "ckeditor/templates": "4.11.1"
     },
     "config": {
         "secure-http": false
