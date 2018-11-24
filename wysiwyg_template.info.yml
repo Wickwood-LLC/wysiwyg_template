@@ -4,5 +4,5 @@ core: 8.x
 package: 'User interface'
 type: module
 dependencies:
-  - wysiwyg_template_core
+  - wysiwyg_template:wysiwyg_template_core
 configure: entity.wysiwyg_template.collection
