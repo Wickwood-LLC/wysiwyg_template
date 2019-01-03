@@ -100,9 +100,7 @@ class Templates extends PluginBase implements CKEditorPluginInterface, Container
    * {@inheritdoc}
    */
   public function getFile() {
-    // @todo This location is hard-coded and should be more flexible.
-    // @see https://www.drupal.org/node/2693151
-    return $this->requestStack->getCurrentRequest()->getBaseUrl() . '/' . $this->config->get('library_path') . '/plugin.js';
+    return $this->config->get('library_path') . '/plugin.js';
   }
 
   /**
