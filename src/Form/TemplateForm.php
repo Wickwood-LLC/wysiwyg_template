@@ -86,13 +86,13 @@ class TemplateForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label template.', [
+        $this->messenger()->addStatus($this->t('Created the %label template.', [
           '%label' => $wysiwyg_template->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label template.', [
+        $this->messenger()->addStatus($this->t('Saved the %label template.', [
           '%label' => $wysiwyg_template->label(),
         ]));
     }
