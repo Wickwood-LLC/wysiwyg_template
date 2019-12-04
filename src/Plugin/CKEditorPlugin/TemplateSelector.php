@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Plugin\CKEditorPlugin\TemplateSelector.
- */
 
 namespace Drupal\wysiwyg_template\Plugin\CKEditorPlugin;
 
@@ -24,7 +20,7 @@ class TemplateSelector extends CKEditorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getButtons() {
+  public function getButtons(): array {
     return [
       'TemplateSelector' => [
         'label' => $this->t('Insert templates'),
@@ -43,7 +39,7 @@ class TemplateSelector extends CKEditorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfig(Editor $editor) {
+  public function getConfig(Editor $editor): array {
     return [
       // @todo Implement per-content-type listings.
       // @see https://www.drupal.org/node/2693221
@@ -55,7 +51,7 @@ class TemplateSelector extends CKEditorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getLibraries(Editor $editor) {
+  public function getLibraries(Editor $editor): array {
     return [
       'core/drupal.ajax',
     ];
@@ -64,7 +60,7 @@ class TemplateSelector extends CKEditorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getDependencies(Editor $editor) {
+  public function getDependencies(Editor $editor): array {
     return ['templates'];
   }
 

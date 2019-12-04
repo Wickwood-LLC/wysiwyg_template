@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Entity\Template.
- */
-
 namespace Drupal\wysiwyg_template\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -89,39 +84,41 @@ class Template extends ConfigEntityBase implements TemplateInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDescription() {
+  public function getDescription(): string {
     return $this->description;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getBody() {
+  public function getBody(): string {
     if ($body = $this->get('body')) {
       return $body['value'];
     }
+    return '';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getFormat() {
+  public function getFormat(): string {
     if ($body = $this->get('body')) {
       return $body['format'];
     }
+    return '';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getWeight() {
+  public function getWeight(): int {
     return $this->weight;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getNodeTypes() {
+  public function getNodeTypes(): array {
     return $this->node_types ?: [];
   }
 
@@ -146,7 +143,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
   /**
    * {@inheritdoc}
    */
-  public static function loadByNodeType(NodeTypeInterface $node_type = NULL) {
+  public static function loadByNodeType(NodeTypeInterface $node_type = NULL): array {
     /** @var \Drupal\wysiwyg_template_core\TemplateInterface[] $templates */
     $templates = static::loadMultiple();
     foreach ($templates as $id => $template) {
@@ -159,7 +156,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
       }
       else {
         // Any templates without types, plus the templates that specify this type.
-        if (empty($template->getNodeTypes()) || in_array($node_type->id(), $template->getNodeTypes())) {
+        if (empty($template->getNodeTypes()) || in_array($node_type->id(), $template->getNodeTypes(), TRUE)) {
           continue;
         }
         unset($templates[$id]);

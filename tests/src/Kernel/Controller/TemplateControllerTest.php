@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\Tests\wysiwyg_template\Kernel\Controller\TemplateControllerTest.
- */
 
 namespace Drupal\Tests\wysiwyg_template\Kernel\Controller;
 
@@ -10,6 +6,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\wysiwyg_template\Controller\TemplateController;
 use Drupal\wysiwyg_template\Entity\Template;
+use stdClass;
 
 /**
  * Tests the template controller object.
@@ -70,13 +67,13 @@ class TemplateControllerTest extends KernelTestBase {
   public function testJsCallback() {
     // No node types passed, no templates.
     $request = $this->controller->listJson();
-    $expected = new \stdClass();
+    $expected = new stdClass();
     $expected->imagesPath = FALSE;
-    $this->assertEquals($expected, $this->getJson($request->getContent()));
+    self::assertEquals($expected, $this->getJson($request->getContent()));
 
     // Node type, no templates.
     $request = $this->controller->listJson($this->nodeTypes[1]);
-    $this->assertEquals($expected, $this->getJson($request->getContent()));
+    self::assertEquals($expected, $this->getJson($request->getContent()));
 
     // Add a few non-node-specific templates.
     foreach (range(0, 4) as $i) {
@@ -115,7 +112,7 @@ class TemplateControllerTest extends KernelTestBase {
     // Template 5 should not be in this list.
     $request = $this->controller->listJson($this->nodeTypes[1]);
     $json = $this->getJson($request->getContent());
-    $this->assertEquals(4, count($json->templates));
+    self::assertCount(4, $json->templates);
     $this->assertSame($this->templates[0]->getBody(), $json->templates[0]->html);
     $this->assertSame($this->templates[1]->getBody(), $json->templates[1]->html);
     $this->assertSame($this->templates[2]->getBody(), $json->templates[2]->html);
@@ -124,7 +121,7 @@ class TemplateControllerTest extends KernelTestBase {
     // Node type 2 should list all templates.
     $request = $this->controller->listJson($this->nodeTypes[2]);
     $json = $this->getJson($request->getContent());
-    $this->assertEquals(5, count($json->templates));
+    self::assertCount(5, $json->templates);
     $this->assertSame($this->templates[4]->getBody(), $json->templates[0]->html);
     $this->assertSame($this->templates[0]->getBody(), $json->templates[1]->html);
     $this->assertSame($this->templates[1]->getBody(), $json->templates[2]->html);
@@ -146,7 +143,7 @@ class TemplateControllerTest extends KernelTestBase {
     if (empty($matches[0])) {
       $this->fail('No json found in ' . $js);
     }
-    return json_decode($matches[0]);
+    return json_decode($matches[0], TRUE);
   }
 
 }

@@ -1,13 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\TemplateListBuilder.
- */
-
 namespace Drupal\wysiwyg_template;
 
-use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -20,14 +14,14 @@ class TemplateListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'wysiwyg_template_list_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header['label'] = $this->t('Template');
     return $header + parent::buildHeader();
   }
@@ -35,7 +29,7 @@ class TemplateListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     $row['label'] = $entity->label();
     return $row + parent::buildRow($entity);
   }
@@ -43,7 +37,7 @@ class TemplateListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
 
     // Better empty text.

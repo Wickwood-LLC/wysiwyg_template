@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\Tests\wysiwyg_template\Kernel\Entity\TemplateTest.
- */
 
 namespace Drupal\Tests\wysiwyg_template\Kernel\Entity;
 
@@ -79,21 +75,21 @@ class TemplateTest extends KernelTestBase {
 
     /** @var \Drupal\wysiwyg_template_core\TemplateInterface $template */
     $template = Template::load($values['id']);
-    $this->assertEquals($values['id'], $template->id());
-    $this->assertEquals($values['label'], $template->label());
-    $this->assertEquals($values['body']['value'], $template->getBody());
-    $this->assertEquals($values['body']['format'], $template->getFormat());
-    $this->assertEquals($values['node_types'], $template->getNodeTypes());
-    $this->assertEquals($values['weight'], $template->getWeight());
+    self::assertEquals($values['id'], $template->id());
+    self::assertEquals($values['label'], $template->label());
+    self::assertEquals($values['body']['value'], $template->getBody());
+    self::assertEquals($values['body']['format'], $template->getFormat());
+    self::assertEquals($values['node_types'], $template->getNodeTypes());
+    self::assertEquals($values['weight'], $template->getWeight());
 
     // Since this template specifies node types, it should not be returned if
     // no node types are specified.
-    $this->assertEquals([], Template::loadByNodeType());
+    self::assertEquals([], Template::loadByNodeType());
 
     // It should return for types 1 and 2, but not 3.
-    $this->assertEquals([$template->id() => $template], Template::loadByNodeType($this->nodeTypes[1]));
-    $this->assertEquals([$template->id() => $template], Template::loadByNodeType($this->nodeTypes[2]));
-    $this->assertEquals([], Template::loadByNodeType($this->nodeTypes[3]));
+    self::assertEquals([$template->id() => $template], Template::loadByNodeType($this->nodeTypes[1]));
+    self::assertEquals([$template->id() => $template], Template::loadByNodeType($this->nodeTypes[2]));
+    self::assertEquals([], Template::loadByNodeType($this->nodeTypes[3]));
   }
 
 }

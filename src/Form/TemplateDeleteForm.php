@@ -1,14 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Form\TemplateDeleteForm.
- */
-
 namespace Drupal\wysiwyg_template\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 
 /**
@@ -18,14 +14,14 @@ class TemplateDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Are you sure you want to delete %name?', array('%name' => $this->entity->label()));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return new Url('entity.wysiwyg_template.collection');
   }
 

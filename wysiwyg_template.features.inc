@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Additional hooks for features support.
- */
 
 /**
  * Implements hook_features_export_options().
@@ -34,9 +30,9 @@ function wysiwyg_template_features_export_render($module_name, $data, $export = 
   $code = array();
   $code[] = '  $templates = array();';
   foreach ($data as $name) {
-    $code[] = "  \$templates['{$name}'] = " . features_var_export(wysiwyg_template_load_template($name), '  ') . ";";
+    $code[] = "  \$templates['{$name}'] = " . features_var_export(wysiwyg_template_load_template($name), '  ') . ';';
   }
-  $code[] = "  return \$templates;";
+  $code[] = '  return $templates;';
   $code = implode("\n", $code);
   return array('wysiwyg_template_default_templates' => $code);
 }

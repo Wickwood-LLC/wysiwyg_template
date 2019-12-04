@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Plugin\CKEditorPlugin\Templates.
- */
 
 namespace Drupal\wysiwyg_template\Plugin\CKEditorPlugin;
 
@@ -78,35 +74,35 @@ class Templates extends PluginBase implements CKEditorPluginInterface, Container
   /**
    * {@inheritdoc}
    */
-  public function isInternal() {
+  public function isInternal(): bool {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDependencies(Editor $editor) {
+  public function getDependencies(Editor $editor): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getLibraries(Editor $editor) {
+  public function getLibraries(Editor $editor): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getFile() {
+  public function getFile(): string {
     return $this->config->get('library_path') . '/plugin.js';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfig(Editor $editor) {
+  public function getConfig(Editor $editor): array {
     return [];
   }
 

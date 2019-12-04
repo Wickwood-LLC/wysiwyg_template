@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\Tests\wysiwyg_template_core\Kernel\Plugin\Filter\FilterTemplatesTest.
- */
 
 namespace Drupal\Tests\wysiwyg_template_core\Kernel\Plugin\Filter;
 
@@ -10,7 +6,7 @@ use Drupal\filter\FilterPluginCollection;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * Tests the WYSIWYG cleanup filter.
+ * Tests the Wysiwyg cleanup filter.
  *
  * @group wysiwyg_template
  *
@@ -56,8 +52,8 @@ class FilterTemplatesTest extends KernelTestBase {
    */
   public function testFilter($input, $expected) {
     $filter = $this->filter;
-    $test = function($input) use ($filter) {
-      return $this->filter->process($input, 'und');
+    $test = static function($input) use ($filter) {
+      return $filter->process($input, 'und');
     };
     $this->assertSame($expected, $test($input)->getProcessedText());
   }
@@ -68,7 +64,7 @@ class FilterTemplatesTest extends KernelTestBase {
    * @return array
    *   Array of data sets to test with.
    */
-  public function providerTestFilter() {
+  public function providerTestFilter(): array {
     return [
       // Raw, expected.
       ['<img src="llama.jpg" />', '<img src="llama.jpg" />'],

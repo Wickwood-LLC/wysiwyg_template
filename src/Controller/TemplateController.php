@@ -1,14 +1,11 @@
 <?php
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Controller\TemplateController.
- */
 
 namespace Drupal\wysiwyg_template\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\NodeTypeInterface;
 use Drupal\wysiwyg_template\Entity\Template;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -28,13 +25,13 @@ class TemplateController extends ControllerBase {
    *
    * @see https://www.drupal.org/node/2693221
    */
-  public function listJson(NodeTypeInterface $node_type = NULL) {
+  public function listJson(NodeTypeInterface $node_type = NULL): Response {
     $templates = [
       // @todo Support images.
       'imagesPath' => FALSE,
     ];
     foreach (Template::loadByNodeType($node_type) as $template) {
-      $json_template = new \stdClass();
+      $json_template = new stdClass();
       $json_template->title = $template->label();
       // @todo Images.
       // @see https://www.drupal.org/node/2692469

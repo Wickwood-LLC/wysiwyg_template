@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Form\CrudTest.
- */
 
 namespace Drupal\wysiwyg_template\Tests\Form;
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\wysiwyg_template_core\TemplateInterface.
- */
-
 namespace Drupal\wysiwyg_template_core;
 
 use Drupal\node\NodeTypeInterface;
@@ -20,7 +15,7 @@ interface TemplateInterface  {
    * @return string
    *   The template description.
    */
-  public function getDescription();
+  public function getDescription(): string;
 
   /**
    * Gets the template body.
@@ -28,7 +23,7 @@ interface TemplateInterface  {
    * @return string
    *   The template HTML body.
    */
-  public function getBody();
+  public function getBody(): string;
 
   /**
    * Gets the text format.
@@ -36,7 +31,7 @@ interface TemplateInterface  {
    * @return string
    *   The text format for the body.
    */
-  public function getFormat();
+  public function getFormat(): string;
 
   /**
    * Gets the template weight.
@@ -44,14 +39,14 @@ interface TemplateInterface  {
    * @return int
    *   The template weight.
    */
-  public function getWeight();
+  public function getWeight(): int;
 
   /**
    * Gets the list of allowed node types.
    *
    * @return string[]
    */
-  public function getNodeTypes();
+  public function getNodeTypes(): array ;
 
   /**
    * Loads templates filtered by node type.
@@ -60,9 +55,9 @@ interface TemplateInterface  {
    *   (optional) The node type to filter by. If this is not passed, only
    *   templates that specify *no* types will be returned.
    *
-   * @return \Drupal\wysiwyg_template\TemplateInterface[]
+   * @return \Drupal\wysiwyg_template_core\TemplateInterface[]
    *   The list of available templates filtered by node type.
    */
-  public static function loadByNodeType(NodeTypeInterface $node_type = NULL);
+  public static function loadByNodeType(NodeTypeInterface $node_type = NULL): array;
 
 }

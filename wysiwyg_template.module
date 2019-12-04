@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains hook implementations for the WYSIWYG template module.
- */
 
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
@@ -16,17 +12,17 @@ use Drupal\wysiwyg_template\Entity\Template;
 function wysiwyg_template_editor_js_settings_alter(array &$settings) {
 
   // Change url to be node-type-specific if creating or editing a node.
-  $route_match = \Drupal::routeMatch();
+  $route_match = Drupal::routeMatch();
   $node_type = NULL;
 
-  if ($route_match->getRouteName() == 'entity.node.edit_form') {
+  if ($route_match->getRouteName() === 'entity.node.edit_form') {
     $node_type = $route_match->getParameter('node')->getType();
   }
-  else if ($route_match->getRouteName() == 'node.add') {
+  else if ($route_match->getRouteName() === 'node.add') {
     $node_type = $route_match->getParameter('node_type')->get('type');
   }
 
-  if (!is_null($node_type)) {
+  if ($node_type !== NULL) {
     foreach ($settings['editor']['formats'] as $format => $config) {
       if (isset($config['editorSettings']['templates_files'])) {
         $url = Url::fromRoute('wysiwyg_template.list_js.type', ['node_type' => $node_type]);
@@ -55,7 +51,7 @@ function wysiwyg_template_form_node_type_form_alter(array &$form, FormStateInter
   ];
   $form['wysiwyg_template']['wysiwyg_template_default'] = [
     '#type' => 'select',
-    '#options' => array_map(function($item) {
+    '#options' => array_map(static function($item) {
       return $item->label();
     }, $templates),
     '#default_value' => $type->getThirdPartySetting('wysiwyg_template', 'default_template'),

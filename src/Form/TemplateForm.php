@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Form\TemplateForm.
- */
-
 namespace Drupal\wysiwyg_template\Form;
 
 use Drupal\Core\Entity\EntityForm;
@@ -60,7 +55,7 @@ class TemplateForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-    $node_types = array_map(function ($item) {
+    $node_types = array_map(static function ($item) {
       return $item->label();
     }, NodeType::loadMultiple());
 

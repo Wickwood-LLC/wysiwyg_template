@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\wysiwyg_template\Tests\DefaultContentTest.
- */
 
 namespace Drupal\wysiwyg_template\Tests;
 
