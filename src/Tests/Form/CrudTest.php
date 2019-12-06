@@ -4,7 +4,7 @@ namespace Drupal\wysiwyg_template\Tests\Form;
 
 use Drupal\Core\Url;
 use Drupal\node\Entity\NodeType;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 use Drupal\wysiwyg_template\Entity\Template;
 
 /**
@@ -12,7 +12,7 @@ use Drupal\wysiwyg_template\Entity\Template;
  *
  * @group wysiwyg_template
  */
-class CrudTest extends WebTestBase {
+class CrudTest extends BrowserTestBase {
 
   /**
    * Admin user.
@@ -56,8 +56,8 @@ class CrudTest extends WebTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertUrl(Url::fromRoute('entity.wysiwyg_template.collection'));
-    $this->assertEscaped($id, 'The machine name appears on the listing page.');
-    $this->assertEscaped($edit['label'], 'The label appears on the listing page.');
+    $this->assertEscaped($id);
+    $this->assertEscaped($edit['label']);
 
     /** @var \Drupal\wysiwyg_template_core\TemplateInterface $template */
     $template = Template::load($id);
@@ -69,8 +69,8 @@ class CrudTest extends WebTestBase {
     unset($edit['id']);
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertUrl(Url::fromRoute('entity.wysiwyg_template.collection'));
-    $this->assertEscaped($id, 'The machine name appears on the listing page.');
-    $this->assertEscaped($edit['label'], 'The label appears on the listing page.');
+    $this->assertEscaped($id);
+    $this->assertEscaped($edit['label']);
 
     // Delete.
     $this->drupalGet($template->toUrl('delete-form'));

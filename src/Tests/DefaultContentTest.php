@@ -3,7 +3,7 @@
 namespace Drupal\wysiwyg_template\Tests;
 
 use Drupal\node\Entity\NodeType;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 use Drupal\wysiwyg_template\Entity\Template;
 
 /**
@@ -11,7 +11,7 @@ use Drupal\wysiwyg_template\Entity\Template;
  *
  * @group wysiwyg_template
  */
-class DefaultContentTest extends WebTestBase {
+class DefaultContentTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
