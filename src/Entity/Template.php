@@ -85,7 +85,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
    * {@inheritdoc}
    */
   public function getDescription(): string {
-    return $this->description;
+    return $this->description ?: '';
   }
 
   /**
