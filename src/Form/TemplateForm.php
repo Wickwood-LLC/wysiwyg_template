@@ -91,7 +91,7 @@ class TemplateForm extends EntityForm {
           '%label' => $wysiwyg_template->label(),
         ]));
     }
-    $form_state->setRedirectUrl($wysiwyg_template->urlInfo('collection'));
+    $form_state->setRedirectUrl($wysiwyg_template->toUrl('collection'));
   }
 
 }
