@@ -1,5 +1,5 @@
 name: 'Wysiwyg Template Core'
-description: 'Core functionality for the Wysiwyg Template module'
+description: 'Core functionality for the Wysiwyg Template module.'
 core_version_requirement: ^8.8 || ^9
 package: 'User interface'
 type: module
