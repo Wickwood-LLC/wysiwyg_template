@@ -2,6 +2,8 @@
 
 namespace Drupal\wysiwyg_template\Form;
 
+use Drupal;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\NodeType;
@@ -55,18 +57,26 @@ class TemplateForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-    $node_types = array_map(static function ($item) {
-      return $item->label();
-    }, NodeType::loadMultiple());
-
-    $form['node_types'] = [
-      '#type' => 'checkboxes',
-      '#default_value' => $wysiwyg_template->getNodeTypes(),
-      '#title' => $this->t('Available for content types'),
-      '#description' => $this->t('If you select no content type, this template will be available for all content types.'),
-      '#access' => (bool) count($node_types),
-      '#options' => $node_types,
+    $form['entity_types'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Available for:'),
+      '#description' => $this->t('If you select no type in a section, this template will be available for all types of that section.'),
+      '#tree' => TRUE,
     ];
+    foreach (Drupal::service('wysiwyg_template.services')->getEntityTypesAndBundles() as $id => $defintion) {
+      if (!empty($defintion['bundles'])) {
+        $types = [];
+        foreach ($defintion['bundles'] as $bundleId => $bundeDef) {
+          $types[$bundleId] = $bundeDef['label'];
+        }
+        $form['entity_types'][$id] = [
+          '#type' => 'checkboxes',
+          '#default_value' => $wysiwyg_template->getBundles($id),
+          '#title' => $defintion['label'],
+          '#options' => $types,
+        ];
+      }
+    }
 
     return $form;
   }

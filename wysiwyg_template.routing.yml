@@ -1,13 +1,5 @@
-wysiwyg_template.list_js:
-  path: '/wysiwyg-templates/js'
-  defaults:
-    _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::listJson'
-  requirements:
-    _permission: 'access content'
-# @todo Implement per-content-type listings.
-# @see https://www.drupal.org/node/2693221
 wysiwyg_template.list_js.type:
-  path: '/wysiwyg-templates/js/{node_type}'
+  path: '/wysiwyg-templates/js/{entity_type}/{bundle}'
   defaults:
     _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::listJson'
   requirements:

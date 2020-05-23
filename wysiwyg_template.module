@@ -10,22 +10,31 @@ use Drupal\wysiwyg_template\Entity\Template;
  * Implements hook_editor_js_settings_alter().
  */
 function wysiwyg_template_editor_js_settings_alter(array &$settings) {
-
-  // Change url to be node-type-specific if creating or editing a node.
+  // Change url to be bundle specific if creating or editing an entity.
   $route_match = Drupal::routeMatch();
-  $node_type = NULL;
-
-  if ($route_match->getRouteName() === 'entity.node.edit_form') {
-    $node_type = $route_match->getParameter('node')->getType();
+  $entity_type = NULL;
+  $bundle = NULL;
+  foreach (Drupal::service('wysiwyg_template.services')->getEntityTypesAndBundles() as $entity_type => $defintion) {
+    if (empty($defintion['bundles'])) {
+      // No templates for this entity type.
+      break;
+    }
+    if ($route_match->getRouteName() === 'entity.' . $entity_type . '.edit_form') {
+      $bundle = $route_match->getParameter($entity_type)->getType();
+    }
+    else if ($route_match->getRouteName() === $entity_type . '.add') {
+      $bundle = $route_match->getParameter($entity_type . '_type')->get('type');
+    }
+    if ($bundle !== NULL && isset($defintion[$bundle])) {
+      break;
+    }
+    $bundle = NULL;
   }
-  else if ($route_match->getRouteName() === 'node.add') {
-    $node_type = $route_match->getParameter('node_type')->get('type');
-  }
 
-  if ($node_type !== NULL) {
+  if ($bundle !== NULL) {
     foreach ($settings['editor']['formats'] as $format => $config) {
       if (isset($config['editorSettings']['templates_files'])) {
-        $url = Url::fromRoute('wysiwyg_template.list_js.type', ['node_type' => $node_type]);
+        $url = Url::fromRoute('wysiwyg_template.list_js.type', ['entity_type' => $entity_type, 'bundle' => $bundle]);
         $settings['editor']['formats'][$format]['editorSettings']['templates_files'] = [$url->toString()];
       }
     }
@@ -41,9 +50,9 @@ function wysiwyg_template_editor_js_settings_alter(array &$settings) {
  * @see NodeTypeForm::form()
  */
 function wysiwyg_template_form_node_type_form_alter(array &$form, FormStateInterface $form_state) {
-  /** @var \Drupal\node\NodeTypeInterface $type */
-  $type = $form_state->getFormObject()->getEntity();
-  $templates = Template::loadByNodeType($type);
+  /** @var \Drupal\node\NodeTypeInterface $bundle */
+  $bundle = $form_state->getFormObject()->getEntity();
+  $templates = Template::loadByTypeAndBundle('node', $bundle->id());
   $form['wysiwyg_template'] = [
     '#type' => 'details',
     '#title' => t('WYSIWYG template'),
@@ -54,7 +63,7 @@ function wysiwyg_template_form_node_type_form_alter(array &$form, FormStateInter
     '#options' => array_map(static function($item) {
       return $item->label();
     }, $templates),
-    '#default_value' => $type->getThirdPartySetting('wysiwyg_template', 'default_template'),
+    '#default_value' => $bundle->getThirdPartySetting('wysiwyg_template', 'default_template'),
     '#title' => t('Default template for this content type'),
     '#empty_value' => '',
   ];

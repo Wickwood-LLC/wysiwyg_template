@@ -33,6 +33,14 @@ wysiwyg_template.wysiwyg_template.*:
       label: 'Available content types'
       sequence:
         type: string
+    entity_types:
+      type: sequence
+      label: 'Available entity types'
+      sequence:
+        type: sequence
+        label: 'Available bundles'
+        sequence:
+          type: string
 
 node.type.*.third_party.wysiwyg_template:
   type: mapping

@@ -40,10 +40,13 @@ class TemplateSelector extends CKEditorPluginBase {
    * {@inheritdoc}
    */
   public function getConfig(Editor $editor): array {
+    // Using 'dummy' as entity type and bundle as the config will be overwritten
+    // with specific values in @see wysiwyg_template_editor_js_settings_alter().
     return [
-      // @todo Implement per-content-type listings.
-      // @see https://www.drupal.org/node/2693221
-      'templates_files' => [Url::fromRoute('wysiwyg_template.list_js')->toString()],
+      'templates_files' => [Url::fromRoute('wysiwyg_template.list_js.type', [
+        'entity_type' => 'dummy',
+        'bundle' => 'dummy',
+      ])->toString()],
       'templates_replaceContent' => FALSE,
     ];
   }

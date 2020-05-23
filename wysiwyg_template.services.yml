@@ -1,0 +1,5 @@
+services:
+
+  wysiwyg_template.services:
+    class: Drupal\wysiwyg_template\Services
+    arguments: ['@entity_type.manager', '@entity_type.bundle.info', '@entity_field.manager']

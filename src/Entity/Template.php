@@ -3,6 +3,7 @@
 namespace Drupal\wysiwyg_template\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\node\NodeTypeInterface;
 use Drupal\wysiwyg_template_core\TemplateInterface;
@@ -82,6 +83,13 @@ class Template extends ConfigEntityBase implements TemplateInterface {
   protected $node_types;
 
   /**
+   * The entity types this template is available for.
+   *
+   * @var string[][]
+   */
+  protected $entity_types;
+
+  /**
    * {@inheritdoc}
    */
   public function getDescription(): string {
@@ -125,8 +133,29 @@ class Template extends ConfigEntityBase implements TemplateInterface {
   /**
    * {@inheritdoc}
    */
+  public function getBundles($entity_type = NULL): array {
+    if ($entity_type === NULL) {
+      return empty($this->entity_types) ? [] : array_keys($this->entity_types);
+    }
+    return $this->entity_types[$entity_type] ?: [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBundles($entity_type, array $bundles): TemplateInterface {
+    $this->entity_types[$entity_type] = $bundles;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save() {
     $this->node_types = array_values(array_filter($this->getNodeTypes()));
+    foreach ($this->getBundles() as $type) {
+      $this->entity_types[$type] = array_values(array_filter($this->getBundles($type)));
+    }
     parent::save();
   }
 
@@ -163,6 +192,39 @@ class Template extends ConfigEntityBase implements TemplateInterface {
       }
     }
 
+    return $templates;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function loadByTypeAndBundle($entity_type, $bundle): array {
+    /** @var \Drupal\wysiwyg_template_core\TemplateInterface[] $templates */
+    $templates = static::loadMultiple();
+    foreach ($templates as $id => $template) {
+      $bundles = $template->getBundles($entity_type);
+      if (!empty($bundles)) {
+        if (!in_array($bundle, $bundles)) {
+          // At least one bundle of the entity type is selected but not the given
+          // one, so this template is not for us.
+          unset($templates[$id]);
+        }
+        // Otherwise, we are relevant for the given bundle.
+      }
+      else {
+        foreach ($template->getBundles() as $type) {
+          if ($type === $entity_type) {
+            // Do not test the current type again.
+            continue;
+          }
+          if (!empty($template->getBundles($entity_type))) {
+            // The template is selected for another entity type, so it's not for us.
+            unset($templates[$id]);
+            continue 2;
+          }
+        }
+      }
+    }
     return $templates;
   }
 
