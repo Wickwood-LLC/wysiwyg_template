@@ -33,10 +33,10 @@ For composer to be able to find the library, you have to add this section into y
             "package": {
                 "name": "ckeditor/templates",
                 "type": "drupal-library",
-                "version": "4.11.1",
+                "version": "4.14.1",
                 "dist": {
                     "type": "zip",
-                    "url": "https://download.ckeditor.com/templates/releases/templates_4.11.1.zip",
+                    "url": "https://download.ckeditor.com/templates/releases/templates_4.14.1.zip",
                     "reference": "master"
                 }
             }
@@ -61,4 +61,4 @@ For composer to be able to find the library, you have to add this section into y
 
 Supported editors:
 
- - CKEditor 4.10.1
+ - CKEditor ^4
