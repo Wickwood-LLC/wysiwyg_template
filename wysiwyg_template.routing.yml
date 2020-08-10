@@ -4,10 +4,6 @@ wysiwyg_template.list_js.type:
     _controller: '\Drupal\wysiwyg_template\Controller\TemplateController::listJson'
   requirements:
     _permission: 'access content'
-  options:
-    parameters:
-      node_type:
-        with_config_overrides: TRUE
 
 # Template routing definition
 entity.wysiwyg_template.collection:

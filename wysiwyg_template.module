@@ -14,18 +14,19 @@ function wysiwyg_template_editor_js_settings_alter(array &$settings) {
   $route_match = Drupal::routeMatch();
   $entity_type = NULL;
   $bundle = NULL;
+
   foreach (Drupal::service('wysiwyg_template.services')->getEntityTypesAndBundles() as $entity_type => $defintion) {
     if (empty($defintion['bundles'])) {
       // No templates for this entity type.
-      break;
+      continue;
     }
     if ($route_match->getRouteName() === 'entity.' . $entity_type . '.edit_form') {
-      $bundle = $route_match->getParameter($entity_type)->getType();
+      $bundle = $route_match->getParameter($entity_type)->bundle();
     }
     else if ($route_match->getRouteName() === $entity_type . '.add') {
       $bundle = $route_match->getParameter($entity_type . '_type')->get('type');
     }
-    if ($bundle !== NULL && isset($defintion[$bundle])) {
+    if ($bundle !== NULL && isset($defintion['bundles'][$bundle])) {
       break;
     }
     $bundle = NULL;
