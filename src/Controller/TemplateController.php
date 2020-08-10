@@ -3,7 +3,6 @@
 namespace Drupal\wysiwyg_template\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\wysiwyg_template\Entity\Template;
 use stdClass;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,19 +13,19 @@ use Symfony\Component\HttpFoundation\Response;
 class TemplateController extends ControllerBase {
 
   /**
-   * A list of available templates based on the content type.
+   * A list of available templates based on the entity type and bundle.
    *
-   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
-   *   (optional) The content type. If set, only templates available for this
-   *   node type will be returned.
+   * @param string $entity_type
+   *   The entity type.
    * @param string $bundle
+   *   The bundle.
    *
    * @return \Symfony\Component\HttpFoundation\Response
    *   The template callback JS.
    *
    * @see https://www.drupal.org/node/2693221
    */
-  public function listJson(ContentEntityTypeInterface $entity_type, $bundle): Response {
+  public function listJson($entity_type, $bundle): Response {
     $templates = [
       // @todo Support images.
       'imagesPath' => FALSE,
