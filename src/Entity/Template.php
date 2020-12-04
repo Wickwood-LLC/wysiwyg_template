@@ -23,6 +23,15 @@ use Drupal\wysiwyg_template_core\TemplateInterface;
  *     }
  *   },
  *   config_prefix = "wysiwyg_template",
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "description",
+ *     "body",
+ *     "weight",
+ *     "node_types",
+ *     "entity_types"
+ *   },
  *   admin_permission = "administer wysiwyg templates",
  *   entity_keys = {
  *     "id" = "id",
