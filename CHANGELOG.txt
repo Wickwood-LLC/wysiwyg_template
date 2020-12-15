@@ -1,3 +1,29 @@
+3.0.0-rc1, 2020-12-15
+-----------------------
+Issue #3186405 by dieuwe: Define config_export annotation on Template entity
+Issue #2903463 by jchatard, jurgenhaas, jesse.d: Template availability in entities other than nodes
+Issue #3158045 by ryan.gibson, jurgenhaas: Support newer releases of the plugin
+
+3.0.0-beta1, 2020-05-23
+-----------------------
+Issue #2903463 by jurgenhaas: Template availability in entities other than nodes
+Issue #3045397 by RuslanP, jurgenhaas: Module Description: add dots to the end of the sentences
+Issue #3138808 by jurgenhaas: Get ready for Drupal 9
+
+8.x-2.3, 2019-12-09
+-------------------
+Issue #3099306 by Rory Downes, jurgenhaas: Can not add a new template
+Remove Drupal 8.8 deprecations for Drupal 9
+
+8.x-2.2, 2019-12-04
+-------------------
+Issue #2767113 by jurgenhaas: Get ready for Drupal 9
+Issue #3093147 by Sergiu Stici: Deprecated Code Report
+
+8.x-2.1, 2019-01-03
+-------------------
+Issue #3022131 by N-I, JFH: file_get_contents(/web/libraries/templates/plugin.js): failed to open stream: No such file or directory in _locale_parse_js_file() (line 1130 of core\modules\locale\locale.module)
+
 8.x-2.0-rc1, 2018-11-24
 -----------------------
 Issue #3000248 by chipway, Pranjal.addweb: Composer Namespace Dependencies in .info.yml
