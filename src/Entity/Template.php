@@ -102,7 +102,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
    * {@inheritdoc}
    */
   public function getDescription(): string {
-    return $this->description ?: '';
+    return $this->description ?? '';
   }
 
   /**
@@ -136,7 +136,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
    * {@inheritdoc}
    */
   public function getNodeTypes(): array {
-    return $this->node_types ?: [];
+    return $this->node_types ?? [];
   }
 
   /**
@@ -146,7 +146,7 @@ class Template extends ConfigEntityBase implements TemplateInterface {
     if ($entity_type === NULL) {
       return empty($this->entity_types) ? [] : array_keys($this->entity_types);
     }
-    return $this->entity_types[$entity_type] ?: [];
+    return $this->entity_types[$entity_type] ?? [];
   }
 
   /**
