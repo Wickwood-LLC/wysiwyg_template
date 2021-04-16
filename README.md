@@ -33,10 +33,10 @@ For composer to be able to find the library, you have to add this section into y
             "package": {
                 "name": "ckeditor/templates",
                 "type": "drupal-library",
-                "version": "4.14.1",
+                "version": "4.15.1",
                 "dist": {
                     "type": "zip",
-                    "url": "https://download.ckeditor.com/templates/releases/templates_4.14.1.zip",
+                    "url": "https://download.ckeditor.com/templates/releases/templates_4.15.1.zip",
                     "reference": "master"
                 }
             }
@@ -44,6 +44,11 @@ For composer to be able to find the library, you have to add this section into y
     ]
 }
 ```
+
+**Note about Drupal versions:** Depending on the version of Drupal core you have to refer to specific versions of the ckeditor/templates library:
+
+- Drupal 9.1 and above: version 4.15.1
+- Drupal 9.0 and Drupal 8: version 4.14.1
 
 ## INSTALLATION
 
