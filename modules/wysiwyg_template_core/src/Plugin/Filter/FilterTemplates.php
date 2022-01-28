@@ -12,7 +12,7 @@ use Drupal\filter\Plugin\FilterBase;
  *   id = "filter_wysiwyg_cleanup",
  *   title = @Translation("Cleanup Wysiwyg templates"),
  *   description = @Translation("Wysiwyg templates can contain code and attributes that are important for editing but should be removed on public pages."),
- *   type = Drupal\filter\Plugin\FilterInterface::TYPE_HTML_RESTRICTOR,
+ *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_IRREVERSIBLE,
  *   weight = 10
  * )
  */
