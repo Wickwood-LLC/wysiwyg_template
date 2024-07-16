@@ -1,0 +1,4 @@
+view-template:
+  css:
+    theme:
+      view.css: { type: external }

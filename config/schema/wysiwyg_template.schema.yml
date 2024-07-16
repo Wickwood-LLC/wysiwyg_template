@@ -5,6 +5,12 @@ wysiwyg_template.settings:
     library_path:
       type: path
       label: 'Root-relative path of the CKEditor Templates plugin directory'
+    editor_css:
+      type: text
+      label: 'CSS to be used in editor'
+    view_css:
+      type: text
+      label: 'CSS to be used in content view'
 
 wysiwyg_template.wysiwyg_template.*:
   type: config_entity

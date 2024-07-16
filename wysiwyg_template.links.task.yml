@@ -2,12 +2,10 @@ wysiwyg_template.collection:
   route_name: entity.wysiwyg_template.collection
   title: 'WYSIWYG templates'
   weight: 10
-  description: 'Create and modify WYSIWYG templates'
-  parent: system.admin_config_content
+  base_route: wysiwyg_template.collection
 
 wysiwyg_template.settings:
   route_name: entity.wysiwyg_template.settings
   title: 'Settings'
   weight: 11
-  description: 'Adjust Wysiwyg Template settings'
-  parent: wysiwyg_template.collection
+  base_route: wysiwyg_template.collection

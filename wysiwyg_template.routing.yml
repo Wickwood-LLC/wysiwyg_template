@@ -37,3 +37,11 @@ entity.wysiwyg_template.delete_form:
     _title: 'Delete template'
   requirements:
     _permission: 'administer wysiwyg templates'
+
+entity.wysiwyg_template.settings:
+  path: '/admin/config/content/wysiwyg-templates/settings'
+  defaults:
+    _form: '\Drupal\wysiwyg_template\Form\SettingsForm'
+    _title: 'Wysiwyg Template Settings'
+  requirements:
+    _permission: 'administer wysiwyg templates'
