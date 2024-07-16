@@ -17,7 +17,7 @@ class FilterTemplatesTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['filter', 'wysiwyg_template_core'];
+  protected static $modules = ['filter', 'wysiwyg_template_core'];
 
   /**
    * The WYSIWYG filter to test.
@@ -29,7 +29,7 @@ class FilterTemplatesTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     /** @var \Drupal\filter\FilterPluginManager $manager */
@@ -64,7 +64,7 @@ class FilterTemplatesTest extends KernelTestBase {
    * @return array
    *   Array of data sets to test with.
    */
-  public function providerTestFilter(): array {
+  public static function providerTestFilter(): array {
     return [
       // Raw, expected.
       ['<img src="llama.jpg" />', '<img src="llama.jpg" />'],

@@ -24,7 +24,7 @@ class TemplateSelector extends CKEditorPluginBase {
     return [
       'TemplateSelector' => [
         'label' => $this->t('Insert templates'),
-        'image' => drupal_get_path('module', 'wysiwyg_template') . '/js/plugins/templateselector/icons/templateselector.png',
+        'image' => \Drupal::service('extension.list.module')->getPath('wysiwyg_template') . '/js/plugins/templateselector/icons/templateselector.png',
       ],
     ];
   }
@@ -33,7 +33,7 @@ class TemplateSelector extends CKEditorPluginBase {
    * {@inheritdoc}
    */
   public function getFile() {
-    return drupal_get_path('module', 'wysiwyg_template') . '/js/plugins/templateselector/plugin.js';
+    return \Drupal::service('extension.list.module')->getPath('wysiwyg_template') . '/js/plugins/templateselector/plugin.js';
   }
 
   /**

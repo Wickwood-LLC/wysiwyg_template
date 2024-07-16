@@ -24,12 +24,12 @@ class CrudTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['wysiwyg_template', 'filter_test', 'node'];
+  protected static $modules = ['wysiwyg_template', 'filter_test', 'node'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->admin = $this->drupalCreateUser(['administer wysiwyg templates', 'administer filters']);
@@ -43,10 +43,16 @@ class CrudTest extends BrowserTestBase {
 
     // Add.
     $this->drupalGet(Url::fromRoute('entity.wysiwyg_template.collection'));
-    $this->assertText(t('There are no WYSIWYG templates yet.'));
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.
+    // The passed text should be HTML decoded, exactly as a human sees it in the browser.
+    $this->assertSession()->pageTextContains(t('There are no WYSIWYG templates yet.'));
     $this->drupalGet(Url::fromRoute('entity.wysiwyg_template.add_form'));
     // Node type selection should be hidden if there are less than 2 types.
-    $this->assertNoText(t('Available for content types'));
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // Verify the assertion: pageTextNotContains() for HTML responses, responseNotContains() for non-HTML responses.
+    // The passed text should be HTML decoded, exactly as a human sees it in the browser.
+    $this->assertSession()->pageTextNotContains(t('Available for content types'));
     $id = strtolower($this->randomMachineName());
     $edit = [
       'id' => $id,
@@ -54,28 +60,31 @@ class CrudTest extends BrowserTestBase {
       'description' => $this->randomString(),
       'body[value]' => $this->randomString(),
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertUrl(Url::fromRoute('entity.wysiwyg_template.collection'));
-    $this->assertEscaped($id);
-    $this->assertEscaped($edit['label']);
+    $this->submitForm($edit, t('Save'));
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.wysiwyg_template.collection'));
+    $this->assertSession()->assertEscaped($id);
+    $this->assertSession()->assertEscaped($edit['label']);
 
     /** @var \Drupal\wysiwyg_template_core\TemplateInterface $template */
     $template = Template::load($id);
-    $this->assertEqual('filter_test', $template->getFormat());
+    $this->assertEquals('filter_test', $template->getFormat());
 
     // Edit.
     $this->drupalGet($template->toUrl('edit-form'));
     $edit['label'] = $this->randomString(12);
     unset($edit['id']);
-    $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertUrl(Url::fromRoute('entity.wysiwyg_template.collection'));
-    $this->assertEscaped($id);
-    $this->assertEscaped($edit['label']);
+    $this->submitForm($edit, t('Save'));
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.wysiwyg_template.collection'));
+    $this->assertSession()->assertEscaped($id);
+    $this->assertSession()->assertEscaped($edit['label']);
 
     // Delete.
     $this->drupalGet($template->toUrl('delete-form'));
-    $this->drupalPostForm(NULL, [], t('Delete'));
-    $this->assertText(t('There are no WYSIWYG templates yet.'));
+    $this->submitForm([], t('Delete'));
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.
+    // The passed text should be HTML decoded, exactly as a human sees it in the browser.
+    $this->assertSession()->pageTextContains(t('There are no WYSIWYG templates yet.'));
 
     // Add a few node types.
     $type1 = NodeType::create([
@@ -90,7 +99,10 @@ class CrudTest extends BrowserTestBase {
     $type2->save();
     $this->drupalGet(Url::fromRoute('entity.wysiwyg_template.add_form'));
     // Node type selection should be hidden if there are less than 2 types.
-    $this->assertText(t('Available for content types'));
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.
+    // The passed text should be HTML decoded, exactly as a human sees it in the browser.
+    $this->assertSession()->pageTextContains(t('Available for content types'));
     $id = strtolower($this->randomMachineName());
     $edit = [
       'id' => $id,
@@ -99,9 +111,9 @@ class CrudTest extends BrowserTestBase {
       'body[value]' => $this->randomString(),
       'node_types[' . $type2->id() . ']' => 1,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, t('Save'));
     $template = Template::load($id);
-    $this->assertEqual([$type2->id()], $template->getNodeTypes());
+    $this->assertEquals([$type2->id()], $template->getNodeTypes());
   }
 
 }

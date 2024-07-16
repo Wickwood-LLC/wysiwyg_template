@@ -16,7 +16,7 @@ class DefaultContentTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'wysiwyg_template'];
+  protected static $modules = ['node', 'wysiwyg_template'];
 
   /**
    * An array of templates.
@@ -42,7 +42,7 @@ class DefaultContentTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     foreach (range(1, 2) as $i) {
@@ -74,9 +74,9 @@ class DefaultContentTest extends BrowserTestBase {
     $edit = [
       'wysiwyg_template_default' => $this->templates[1]->id(),
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save content type'));
+    $this->submitForm($edit, t('Save content type'));
     $type = NodeType::load($this->nodeType->id());
-    $this->assertEqual($this->templates[1]->id(), $type->getThirdPartySetting('wysiwyg_template', 'default_template'));
+    $this->assertEquals($this->templates[1]->id(), $type->getThirdPartySetting('wysiwyg_template', 'default_template'));
 
     // Verify that the default content is set as expected.
     $this->drupalGet('node/add/' . $this->nodeType->id());
@@ -84,9 +84,9 @@ class DefaultContentTest extends BrowserTestBase {
       'title[0][value]' => $this->randomString(),
       // Leave body empty, and it should just be set to the template's value.
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $this->submitForm($edit, t('Save and publish'));
     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
-    $this->assertEqual($this->templates[1]->getBody(), $node->get('body')->value);
+    $this->assertEquals($this->templates[1]->getBody(), $node->get('body')->value);
   }
 
 }

@@ -18,7 +18,7 @@ class TemplateTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['wysiwyg_template', 'node', 'user', 'system'];
+  protected static $modules = ['wysiwyg_template', 'node', 'user', 'system'];
 
   /**
    * Node types to test with.
@@ -30,7 +30,7 @@ class TemplateTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('wysiwyg_template');
