@@ -1,4 +1,4 @@
 view-template:
   css:
     theme:
-      view.css: { type: external }
+      css/view.css: { type: external }
