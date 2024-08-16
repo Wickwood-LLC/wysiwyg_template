@@ -135,9 +135,7 @@ function wysiwyg_template_library_info_alter(&$libraries, $extension) {
       $css_uri = \Drupal::service('file_url_generator')
         ->generate(SettingsForm::getViewCSSFilePath())->toString();
       $libraries['view-template']['css']['theme'] = [
-        $css_uri => array(
-          'type' => 'external',
-        ),
+        $css_uri => []
       ];
     }
   }
