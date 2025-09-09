@@ -159,7 +159,7 @@ function wysiwyg_template_regenerate_css_files($type) {
 /**
  * Implements hook_cache_flush()
  */
-function bwma_cache_flush() {
+function wysiwyg_template_cache_flush() {
   $dir = \Drupal::service('file_system')->realpath('public://mce/');
 
   $finder = new Finder();
@@ -175,7 +175,7 @@ function bwma_cache_flush() {
 /**
  * Implements hook_rebuild()
  */
-function bwma_rebuild() {
+function wysiwyg_template_rebuild() {
   wysiwyg_template_regenerate_css_files('editor_css');
   wysiwyg_template_regenerate_css_files('view_css');
 }
